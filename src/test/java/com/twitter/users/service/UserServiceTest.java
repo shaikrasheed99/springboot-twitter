@@ -1,6 +1,7 @@
 package com.twitter.users.service;
 
 import com.twitter.users.exceptions.UserNameNullException;
+import com.twitter.users.exceptions.UserNotFoundException;
 import com.twitter.users.repository.User;
 import com.twitter.users.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,6 +10,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -42,5 +45,23 @@ public class UserServiceTest {
         User nullUser = new User();
 
         assertThrows(UserNameNullException.class, () -> userService.create(nullUser));
+    }
+
+    @Test
+    void shouldBeAbleToGetUserById() {
+        int userId = 1;
+        when(userRepository.findById(userId)).thenReturn(Optional.ofNullable(user));
+        User user = userService.getUserById(userId);
+
+        assertEquals("Ironman", user.getName());
+        verify(userRepository, times(1)).findById(userId);
+    }
+
+    @Test
+    void shouldBeAbleToThrowExceptionIfUserIsNotPresent() {
+        int userId = 1;
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class, () -> userService.getUserById(userId));
     }
 }
