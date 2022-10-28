@@ -1,0 +1,74 @@
+package com.twitter.users.controller;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.twitter.users.exceptions.UserAlreadyExistException;
+import com.twitter.users.exceptions.UserNameNullException;
+import com.twitter.users.repository.User;
+import com.twitter.users.service.UserService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@WebMvcTest(controllers = {UserController.class})
+public class UserControllerTest {
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private UserService userService;
+
+    private User user;
+
+    @BeforeEach
+    void setUp() {
+        user = new User("Ironman");
+    }
+
+    @Test
+    void shouldBeAbleToCreateUser() throws Exception {
+        when(userService.create(any(User.class))).thenReturn(user);
+        String userJson = new ObjectMapper().writeValueAsString(user);
+
+        ResultActions result = mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON).content(userJson));
+
+        result.andExpect(status().isCreated()).andExpect(jsonPath("$.data.id").value(0)).andDo(print());
+
+        verify(userService, times(1)).create(any(User.class));
+    }
+
+    @Test
+    void shouldBeAbleToGiveBadRequestResponseWhenNameIsNull() throws Exception {
+        when(userService.create(any(User.class))).thenThrow(new UserNameNullException("User name exception"));
+        User user = new User();
+        String userJson = new ObjectMapper().writeValueAsString(user);
+
+        ResultActions result = mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON).content(userJson));
+
+        result.andExpect(status().isBadRequest()).andExpect(jsonPath("$.error.message").value("User name exception")).andDo(print());
+
+        verify(userService, times(1)).create(any(User.class));
+    }
+
+    @Test
+    void shouldBeAbleToGiveBadRequestResponseWhenUserIdIsAlreadyExists() throws Exception {
+        when(userService.create(any(User.class))).thenThrow(new UserAlreadyExistException("User already exists"));
+        String userJson = new ObjectMapper().writeValueAsString(user);
+
+        ResultActions result = mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON).content(userJson));
+
+        result.andExpect(status().isBadRequest()).andExpect(jsonPath("$.error.message").value("User already exists")).andDo(print());
+
+        verify(userService, times(1)).create(any(User.class));
+    }
+}
