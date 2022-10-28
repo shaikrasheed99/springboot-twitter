@@ -7,10 +7,7 @@ import com.twitter.users.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 
@@ -35,7 +32,11 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseJson);
     }
 
-    public void getUserById(int userId) {
+    @GetMapping("/{userId}")
+    public ResponseEntity<?> getUserById(@PathVariable int userId) throws JsonProcessingException {
         User user = userService.getUserById(userId);
+        userSuccessResponse.setData(user);
+        String responseJson = userSuccessResponse.convertToJson();
+        return ResponseEntity.status(HttpStatus.OK).body(responseJson);
     }
 }

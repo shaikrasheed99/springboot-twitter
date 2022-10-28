@@ -3,6 +3,7 @@ package com.twitter.users.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.twitter.users.exceptions.UserAlreadyExistException;
 import com.twitter.users.exceptions.UserNameNullException;
+import com.twitter.users.exceptions.UserNotFoundException;
 import com.twitter.users.repository.User;
 import com.twitter.users.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -70,5 +72,29 @@ public class UserControllerTest {
         result.andExpect(status().isBadRequest()).andExpect(jsonPath("$.error.message").value("User already exists")).andDo(print());
 
         verify(userService, times(1)).create(any(User.class));
+    }
+
+    @Test
+    void shouldBeAbleToGetUserDetailsWhenIdIsGiven() throws Exception {
+        int userId = user.getId();
+        when(userService.getUserById(userId)).thenReturn(user);
+
+        ResultActions result = mockMvc.perform(get("/users/{userId}", userId));
+
+        result.andExpect(status().isOk()).andExpect(jsonPath("$.data.id").value(userId)).andExpect(jsonPath("$.data.name").value(user.getName())).andDo(print());
+
+        verify(userService, times(1)).getUserById(userId);
+    }
+
+    @Test
+    void shouldBeAbleToThrowExceptionWhenUserIsNotPresentWithGivenId() throws Exception {
+        int userId = 1;
+        when(userService.getUserById(userId)).thenThrow(new UserNotFoundException("User not found!"));
+
+        ResultActions result = mockMvc.perform(get("/users/{userId}", userId));
+
+        result.andExpect(status().isNotFound()).andExpect(jsonPath("$.error.message").value("User not found!")).andDo(print());
+
+        verify(userService, times(1)).getUserById(userId);
     }
 }
