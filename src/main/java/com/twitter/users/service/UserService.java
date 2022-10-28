@@ -2,6 +2,7 @@ package com.twitter.users.service;
 
 import com.twitter.users.exceptions.UserNameNullException;
 import com.twitter.users.exceptions.UserNotFoundException;
+import com.twitter.users.exceptions.UserAlreadyExistException;
 import com.twitter.users.repository.User;
 import com.twitter.users.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,20 +24,22 @@ public class UserService {
             throw new UserNameNullException("User name should not be empty!");
         }
 
-        return userRepository.save(user);
-    }
+        Optional<User> existedUser = userRepository.findById(user.getId());
 
-    private static boolean isNameNull(User user) {
-        return user.getName() == null;
+        if (existedUser.isPresent()) throw new UserAlreadyExistException("User is already exists!");
+
+        return userRepository.save(user);
     }
 
     public User getUserById(int userId) {
         Optional<User> user = userRepository.findById(userId);
 
-        if (user.isEmpty()) {
-            throw new UserNotFoundException("User not found with that id!");
-        }
+        if (user.isEmpty()) throw new UserNotFoundException("User not found with that id!");
 
         return user.get();
+    }
+
+    private static boolean isNameNull(User user) {
+        return user.getName() == null;
     }
 }

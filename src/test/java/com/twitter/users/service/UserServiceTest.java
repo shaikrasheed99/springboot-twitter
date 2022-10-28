@@ -2,6 +2,7 @@ package com.twitter.users.service;
 
 import com.twitter.users.exceptions.UserNameNullException;
 import com.twitter.users.exceptions.UserNotFoundException;
+import com.twitter.users.exceptions.UserAlreadyExistException;
 import com.twitter.users.repository.User;
 import com.twitter.users.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,6 +46,13 @@ public class UserServiceTest {
         User nullUser = new User();
 
         assertThrows(UserNameNullException.class, () -> userService.create(nullUser));
+    }
+
+    @Test
+    void shouldBeAbleToThrowExceptionWhenTheUserIsAlreadyExists() {
+        when(userRepository.findById(user.getId())).thenReturn(Optional.ofNullable(user));
+
+        assertThrows(UserAlreadyExistException.class, () -> userService.create(user));
     }
 
     @Test
