@@ -14,7 +14,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.NoSuchElementException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -92,5 +93,20 @@ public class TweetServiceTest {
         when(tweetRepository.findById(tweet.getId())).thenReturn(Optional.empty());
 
         assertThrows(TweetNotFoundException.class, () -> tweetService.getById(tweet.getId()));
+    }
+
+    @Test
+    void shouldBeAbleToGetTweetsByUserId() {
+        ArrayList<Tweet> tweets = new ArrayList<>();
+        tweets.add(tweet);
+        tweets.add(tweet);
+        tweets.add(tweet);
+        when(tweetRepository.findAllByUserId(user.getId())).thenReturn(tweets);
+
+        List<Tweet> tweetsByUserId = tweetService.getByUserId(user.getId());
+
+        assertEquals(tweetsByUserId.size(), tweets.size());
+
+        verify(tweetRepository, times(1)).findAllByUserId(user.getId());
     }
 }
