@@ -1,6 +1,7 @@
 package com.twitter.tweets.service;
 
 import com.twitter.tweets.exceptions.InvalidTweetRequestBodyException;
+import com.twitter.tweets.exceptions.TweetNotFoundException;
 import com.twitter.tweets.repository.Tweet;
 import com.twitter.tweets.repository.TweetRepository;
 import com.twitter.users.repository.User;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Optional;
 
 @Service
 public class TweetService {
@@ -36,6 +38,14 @@ public class TweetService {
 
         Tweet tweet = new Tweet(description, author);
         return tweetRepository.save(tweet);
+    }
+
+    public Tweet getById(int id) {
+        Optional<Tweet> tweet = tweetRepository.findById(id);
+
+        if (tweet.isEmpty()) throw new TweetNotFoundException("Tweet is not found with that id!");
+
+        return tweet.get();
     }
 
     private static boolean isDescriptionNull(String description) {

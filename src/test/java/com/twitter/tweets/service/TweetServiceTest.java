@@ -1,6 +1,7 @@
 package com.twitter.tweets.service;
 
 import com.twitter.tweets.exceptions.InvalidTweetRequestBodyException;
+import com.twitter.tweets.exceptions.TweetNotFoundException;
 import com.twitter.tweets.repository.Tweet;
 import com.twitter.tweets.repository.TweetRepository;
 import com.twitter.users.exceptions.UserNotFoundException;
@@ -12,6 +13,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -68,5 +72,25 @@ public class TweetServiceTest {
         when(userService.getUserById(user.getId())).thenThrow(new UserNotFoundException("User not found"));
 
         assertThrows(InvalidTweetRequestBodyException.class, () -> tweetService.create(description, user.getId()));
+    }
+
+    @Test
+    void shouldBeAbleToGetTweetById() {
+        when(tweetRepository.findById(tweet.getId())).thenReturn(Optional.ofNullable(tweet));
+
+        Tweet tweetById = tweetService.getById(tweet.getId());
+
+        assertEquals(tweetById.getId(), tweet.getId());
+        assertEquals(tweetById.getDescription(), tweet.getDescription());
+        assertEquals(tweetById.getUser(), tweet.getUser());
+
+        verify(tweetRepository, times(1)).findById(tweet.getId());
+    }
+
+    @Test
+    void shouldBeAbleToThrowExceptionWhenTweetIsNotFoundById() {
+        when(tweetRepository.findById(tweet.getId())).thenReturn(Optional.empty());
+
+        assertThrows(TweetNotFoundException.class, () -> tweetService.getById(tweet.getId()));
     }
 }
