@@ -1,26 +1,26 @@
-package com.twitter.users.helpers;
+package com.twitter.helpers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserSuccessResponse {
-    private Object data;
+public class ErrorResponse {
+    private Object error;
 
-    public UserSuccessResponse() {
+    public ErrorResponse() {
     }
 
-    public UserSuccessResponse(Object data) {
-        this.data = data;
+    public ErrorResponse(Object error) {
+        this.error = error;
     }
 
-    public Object getData() {
-        return data;
+    public Object getError() {
+        return error;
     }
 
-    public void setData(Object data) {
-        this.data = data;
+    public void setError(Object error) {
+        this.error = error;
     }
 
     public String convertToJson() throws JsonProcessingException {

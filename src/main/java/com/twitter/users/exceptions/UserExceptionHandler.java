@@ -1,9 +1,7 @@
-package com.twitter.users.helpers;
+package com.twitter.users.exceptions;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.twitter.users.exceptions.UserAlreadyExistException;
-import com.twitter.users.exceptions.UserNameNullException;
-import com.twitter.users.exceptions.UserNotFoundException;
+import com.twitter.helpers.ErrorResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +13,7 @@ import java.util.Collections;
 @ControllerAdvice
 public class UserExceptionHandler {
     @Autowired
-    private UserErrorResponse errorResponse;
+    private ErrorResponse errorResponse;
 
     @ExceptionHandler(value = {UserNameNullException.class, UserAlreadyExistException.class})
     public ResponseEntity<?> handleUserNameNullAndAlreadyExistsException(Exception exception) throws JsonProcessingException {

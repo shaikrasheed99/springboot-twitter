@@ -1,7 +1,7 @@
 package com.twitter.users.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.twitter.users.helpers.UserSuccessResponse;
+import com.twitter.helpers.SuccessResponse;
 import com.twitter.users.repository.User;
 import com.twitter.users.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ public class UserController {
     private final UserService userService;
 
     @Autowired
-    private UserSuccessResponse userSuccessResponse;
+    private SuccessResponse successResponse;
 
     @Autowired
     public UserController(UserService userService) {
@@ -27,16 +27,16 @@ public class UserController {
     @PostMapping
     public ResponseEntity<?> create(@RequestBody User user) throws JsonProcessingException {
         User savedUser = userService.create(user);
-        userSuccessResponse.setData(Collections.singletonMap("id", savedUser.getId()));
-        String responseJson = userSuccessResponse.convertToJson();
+        successResponse.setData(Collections.singletonMap("id", savedUser.getId()));
+        String responseJson = successResponse.convertToJson();
         return ResponseEntity.status(HttpStatus.CREATED).body(responseJson);
     }
 
     @GetMapping("/{userId}")
     public ResponseEntity<?> getUserById(@PathVariable int userId) throws JsonProcessingException {
         User user = userService.getUserById(userId);
-        userSuccessResponse.setData(user);
-        String responseJson = userSuccessResponse.convertToJson();
+        successResponse.setData(user);
+        String responseJson = successResponse.convertToJson();
         return ResponseEntity.status(HttpStatus.OK).body(responseJson);
     }
 }
