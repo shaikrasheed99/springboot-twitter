@@ -37,7 +37,7 @@ public class TweetController {
 
     @GetMapping("/{id}/tweets")
     public ResponseEntity<?> getByUserId(@PathVariable int id) throws JsonProcessingException {
-        List<Tweet> tweetsByUserId = tweetService.getByUserId(id);
+        List<Tweet> tweetsByUserId = tweetService.getByAuthorId(id);
 
         ArrayList<TweetResponseBody> tweets = new ArrayList<>();
         tweetsByUserId.forEach(tweet -> {
@@ -48,6 +48,19 @@ public class TweetController {
 
         successResponse.setData(tweets);
         String responseJson = successResponse.convertToJson();
+        return ResponseEntity.status(HttpStatus.OK).body(responseJson);
+    }
+
+    @GetMapping("/{id}/tweets/{tweetId}")
+    public ResponseEntity<?> getById(@PathVariable int id, @PathVariable int tweetId) throws JsonProcessingException {
+        Tweet tweet = tweetService.getByAuthorIdAndTweetId(id, tweetId);
+
+        User author = tweet.getUser();
+        TweetResponseBody tweetResponseBody = new TweetResponseBody(tweet.getId(), tweet.getDescription(), author.getId(), author.getName());
+
+        successResponse.setData(tweetResponseBody);
+        String responseJson = successResponse.convertToJson();
+
         return ResponseEntity.status(HttpStatus.OK).body(responseJson);
     }
 }

@@ -1,7 +1,9 @@
 package com.twitter.tweets.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.twitter.tweets.exceptions.AuthorMismatchException;
 import com.twitter.tweets.exceptions.InvalidTweetRequestBodyException;
+import com.twitter.tweets.exceptions.TweetNotFoundException;
 import com.twitter.tweets.repository.Tweet;
 import com.twitter.tweets.service.TweetService;
 import com.twitter.users.exceptions.UserNotFoundException;
@@ -77,23 +79,56 @@ public class TweetControllerTest {
         tweets.add(tweet);
         tweets.add(tweet);
         tweets.add(tweet);
-        when(tweetService.getByUserId(user.getId())).thenReturn(tweets);
+        when(tweetService.getByAuthorId(user.getId())).thenReturn(tweets);
 
         ResultActions result = mockMvc.perform(get("/users/{id}/tweets", user.getId()));
 
         result.andExpect(status().isOk()).andExpect(jsonPath("$.data[0].description").value(tweets.get(0).getDescription())).andDo(print());
 
-        verify(tweetService, times(1)).getByUserId(user.getId());
+        verify(tweetService, times(1)).getByAuthorId(user.getId());
     }
 
     @Test
     void shouldBeAbleToGiveBadRequestResponseWhenAuthorIdIsNotPresent() throws Exception {
-        when(tweetService.getByUserId(user.getId())).thenThrow(new UserNotFoundException("User not found!"));
+        when(tweetService.getByAuthorId(user.getId())).thenThrow(new UserNotFoundException("User not found!"));
 
         ResultActions result = mockMvc.perform(get("/users/{id}/tweets", user.getId()));
 
         result.andExpect(status().isNotFound()).andExpect(jsonPath("$.error.message").value("User not found!")).andDo(print());
 
-        verify(tweetService, times(1)).getByUserId(user.getId());
+        verify(tweetService, times(1)).getByAuthorId(user.getId());
+    }
+
+    @Test
+    void shouldBeAbleToGetTweetsByUserIdAndTweetId() throws Exception {
+        when(tweetService.getByAuthorIdAndTweetId(user.getId(), tweet.getId())).thenReturn(tweet);
+
+        ResultActions result = mockMvc.perform(get("/users/{id}/tweets/{tweetId}", user.getId(), tweet.getId()));
+
+        result.andExpect(status().isOk()).andExpect(jsonPath("$.data.id").value(tweet.getId())).andExpect(jsonPath("$.data.description").value(tweet.getDescription())).andDo(print());
+
+        verify(tweetService, times(1)).getByAuthorIdAndTweetId(user.getId(), tweet.getId());
+    }
+
+    @Test
+    void shouldBeAbleToGiveTweetNotFoundErrorResponseMessage() throws Exception {
+        when(tweetService.getByAuthorIdAndTweetId(user.getId(), tweet.getId())).thenThrow(new TweetNotFoundException("Tweet not found!"));
+
+        ResultActions result = mockMvc.perform(get("/users/{id}/tweets/{tweetId}", user.getId(), tweet.getId()));
+
+        result.andExpect(status().isNotFound()).andExpect(jsonPath("$.error.message").value("Tweet not found!")).andDo(print());
+
+        verify(tweetService, times(1)).getByAuthorIdAndTweetId(user.getId(), tweet.getId());
+    }
+
+    @Test
+    void shouldBeAbleToGiveForbiddenErrorResponseMessage() throws Exception {
+        when(tweetService.getByAuthorIdAndTweetId(user.getId(), tweet.getId())).thenThrow(new AuthorMismatchException("Author mismatch!"));
+
+        ResultActions result = mockMvc.perform(get("/users/{id}/tweets/{tweetId}", user.getId(), tweet.getId()));
+
+        result.andExpect(status().isForbidden()).andExpect(jsonPath("$.error.message").value("Author mismatch!")).andDo(print());
+
+        verify(tweetService, times(1)).getByAuthorIdAndTweetId(user.getId(), tweet.getId());
     }
 }
