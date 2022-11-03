@@ -44,7 +44,13 @@ public class TweetService {
         return tweet.get();
     }
 
-    public List<Tweet> getByUserId(int id) {
+    public Tweet getByAuthorIdAndTweetId(int authorId, int tweetId) {
+        userService.getUserById(authorId);
+
+        return getById(tweetId);
+    }
+
+    public List<Tweet> getByAuthorId(int id) {
         User author = userService.getUserById(id);
 
         return tweetRepository.findAllByAuthorId(author.getId());

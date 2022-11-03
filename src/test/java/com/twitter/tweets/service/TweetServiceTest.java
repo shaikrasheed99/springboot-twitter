@@ -96,6 +96,13 @@ public class TweetServiceTest {
     }
 
     @Test
+    void shouldBeAbleToThrowExceptionWhenAuthorIsNotFound() {
+        when(userService.getUserById(user.getId())).thenThrow(UserNotFoundException.class);
+
+        assertThrows(UserNotFoundException.class, () -> tweetService.getByAuthorIdAndTweetId(user.getId(), tweet.getId()));
+    }
+
+    @Test
     void shouldBeAbleToGetTweetsByUserId() {
         ArrayList<Tweet> tweets = new ArrayList<>();
         tweets.add(tweet);
@@ -104,7 +111,7 @@ public class TweetServiceTest {
         when(tweetRepository.findAllByAuthorId(user.getId())).thenReturn(tweets);
         when(userService.getUserById(user.getId())).thenReturn(user);
 
-        List<Tweet> tweetsByUserId = tweetService.getByUserId(user.getId());
+        List<Tweet> tweetsByUserId = tweetService.getByAuthorId(user.getId());
 
         assertEquals(tweetsByUserId.size(), tweets.size());
 
@@ -115,7 +122,7 @@ public class TweetServiceTest {
     void shouldBeAbleToThrowExceptionWhenFindingTweetsOfNotExistingUser() {
         when(userService.getUserById(user.getId())).thenThrow(new UserNotFoundException("User not found!"));
 
-        assertThrows(UserNotFoundException.class, () -> tweetService.getByUserId(user.getId()));
+        assertThrows(UserNotFoundException.class, () -> tweetService.getByAuthorId(user.getId()));
 
         verify(userService, times(1)).getUserById(user.getId());
     }
