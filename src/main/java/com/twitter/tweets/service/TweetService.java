@@ -1,5 +1,6 @@
 package com.twitter.tweets.service;
 
+import com.twitter.tweets.exceptions.AuthorMismatchException;
 import com.twitter.tweets.exceptions.InvalidTweetRequestBodyException;
 import com.twitter.tweets.exceptions.TweetNotFoundException;
 import com.twitter.tweets.repository.Tweet;
@@ -45,9 +46,13 @@ public class TweetService {
     }
 
     public Tweet getByAuthorIdAndTweetId(int authorId, int tweetId) {
-        userService.getUserById(authorId);
+        User author = userService.getUserById(authorId);
+        Tweet tweet = getById(tweetId);
 
-        return getById(tweetId);
+        if (tweet.getUser().getId() != authorId)
+            throw new AuthorMismatchException("Author cannot see another author's complete tweet details!");
+
+        return tweet;
     }
 
     public List<Tweet> getByAuthorId(int id) {

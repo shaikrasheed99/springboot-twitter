@@ -1,5 +1,6 @@
 package com.twitter.tweets.service;
 
+import com.twitter.tweets.exceptions.AuthorMismatchException;
 import com.twitter.tweets.exceptions.InvalidTweetRequestBodyException;
 import com.twitter.tweets.exceptions.TweetNotFoundException;
 import com.twitter.tweets.repository.Tweet;
@@ -125,5 +126,14 @@ public class TweetServiceTest {
         assertThrows(UserNotFoundException.class, () -> tweetService.getByAuthorId(user.getId()));
 
         verify(userService, times(1)).getUserById(user.getId());
+    }
+
+    @Test
+    void shouldBeAbleToThrowExceptionWhenAuthorMismatchWithTweetDetails() {
+        User anotherAuthor = new User("Captain");
+        when(userService.getUserById(anotherAuthor.getId() + 1)).thenReturn(anotherAuthor);
+        when(tweetRepository.findById(tweet.getId())).thenReturn(Optional.ofNullable(tweet));
+
+        assertThrows(AuthorMismatchException.class, () -> tweetService.getByAuthorIdAndTweetId(1, tweet.getId()));
     }
 }
