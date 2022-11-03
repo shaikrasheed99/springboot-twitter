@@ -72,7 +72,7 @@ public class TweetServiceTest {
     void shouldBeAbleToThrowExceptionWhenAuthorIdIsNotPresentInUserRepository() {
         when(userService.getUserById(user.getId())).thenThrow(new UserNotFoundException("User not found"));
 
-        assertThrows(InvalidTweetRequestBodyException.class, () -> tweetService.create(description, user.getId()));
+        assertThrows(UserNotFoundException.class, () -> tweetService.create(description, user.getId()));
     }
 
     @Test

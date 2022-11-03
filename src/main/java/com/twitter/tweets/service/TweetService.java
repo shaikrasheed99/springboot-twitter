@@ -28,14 +28,9 @@ public class TweetService {
         if (isDescriptionNull(description) || description.isEmpty())
             errors.add(Collections.singletonMap("message", "Description should not be null or empty!"));
 
-        User author = null;
-        try {
-            author = userService.getUserById(authorId);
-        } catch (Exception exception) {
-            errors.add(Collections.singletonMap("message", exception.getMessage()));
-        }
-
         if (!errors.isEmpty()) throw new InvalidTweetRequestBodyException(errors);
+
+        User author = userService.getUserById(authorId);
 
         Tweet tweet = new Tweet(description, author);
         return tweetRepository.save(tweet);
@@ -49,11 +44,11 @@ public class TweetService {
         return tweet.get();
     }
 
-    private static boolean isDescriptionNull(String description) {
-        return description == null;
-    }
-
     public List<Tweet> getByUserId(int id) {
         return tweetRepository.findAllByUserId(id);
+    }
+
+    private static boolean isDescriptionNull(String description) {
+        return description == null;
     }
 }
