@@ -6,6 +6,6 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 public interface TweetRepository extends CrudRepository<Tweet, Integer> {
-    @Query(value = "SELECT * FROM tweets WHERE USER_ID := id", nativeQuery = true)
-    List<Tweet> findAllByUserId(int id);
+    @Query(value = "SELECT * FROM tweets WHERE author_id = :id", nativeQuery = true)
+    List<Tweet> findAllByAuthorId(int id);
 }

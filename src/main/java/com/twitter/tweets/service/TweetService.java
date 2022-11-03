@@ -45,7 +45,9 @@ public class TweetService {
     }
 
     public List<Tweet> getByUserId(int id) {
-        return tweetRepository.findAllByUserId(id);
+        User author = userService.getUserById(id);
+
+        return tweetRepository.findAllByAuthorId(author.getId());
     }
 
     private static boolean isDescriptionNull(String description) {
