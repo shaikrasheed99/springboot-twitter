@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.twitter.tweets.exceptions.InvalidTweetRequestBodyException;
 import com.twitter.tweets.repository.Tweet;
 import com.twitter.tweets.service.TweetService;
+import com.twitter.users.exceptions.UserNotFoundException;
 import com.twitter.users.repository.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,11 +16,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -68,5 +69,31 @@ public class TweetControllerTest {
         result.andExpect(status().isBadRequest()).andExpect(jsonPath("$.error").value("Description should not be empty!")).andDo(print());
 
         verify(tweetService, times(1)).create("", user.getId());
+    }
+
+    @Test
+    void shouldBeAbleToGetTweetsByUserId() throws Exception {
+        ArrayList<Tweet> tweets = new ArrayList<>();
+        tweets.add(tweet);
+        tweets.add(tweet);
+        tweets.add(tweet);
+        when(tweetService.getByUserId(user.getId())).thenReturn(tweets);
+
+        ResultActions result = mockMvc.perform(get("/users/{id}/tweets", user.getId()));
+
+        result.andExpect(status().isOk()).andExpect(jsonPath("$.data[0].description").value(tweets.get(0).getDescription())).andDo(print());
+
+        verify(tweetService, times(1)).getByUserId(user.getId());
+    }
+
+    @Test
+    void shouldBeAbleToGiveBadRequestResponseWhenAuthorIdIsNotPresent() throws Exception {
+        when(tweetService.getByUserId(user.getId())).thenThrow(new UserNotFoundException("User not found!"));
+
+        ResultActions result = mockMvc.perform(get("/users/{id}/tweets", user.getId()));
+
+        result.andExpect(status().isNotFound()).andExpect(jsonPath("$.error.message").value("User not found!")).andDo(print());
+
+        verify(tweetService, times(1)).getByUserId(user.getId());
     }
 }

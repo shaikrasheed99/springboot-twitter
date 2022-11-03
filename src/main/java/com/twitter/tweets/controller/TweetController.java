@@ -4,17 +4,20 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.twitter.helpers.SuccessResponse;
 import com.twitter.tweets.repository.Tweet;
 import com.twitter.tweets.service.TweetService;
+import com.twitter.users.repository.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
 public class TweetController {
-    private TweetService tweetService;
+    private final TweetService tweetService;
 
     @Autowired
     private SuccessResponse successResponse;
@@ -30,5 +33,21 @@ public class TweetController {
         successResponse.setData(Collections.singletonMap("tweet_id", tweet.getId()));
         String responseJson = successResponse.convertToJson();
         return ResponseEntity.status(HttpStatus.CREATED).body(responseJson);
+    }
+
+    @GetMapping("/{id}/tweets")
+    public ResponseEntity<?> getByUserId(@PathVariable int id) throws JsonProcessingException {
+        List<Tweet> tweetsByUserId = tweetService.getByUserId(id);
+
+        ArrayList<TweetResponseBody> tweets = new ArrayList<>();
+        tweetsByUserId.forEach(tweet -> {
+            User author = tweet.getUser();
+            TweetResponseBody tweetResponseBody = new TweetResponseBody(tweet.getId(), tweet.getDescription(), author.getId(), author.getName());
+            tweets.add(tweetResponseBody);
+        });
+
+        successResponse.setData(tweets);
+        String responseJson = successResponse.convertToJson();
+        return ResponseEntity.status(HttpStatus.OK).body(responseJson);
     }
 }
