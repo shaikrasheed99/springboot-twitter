@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.twitter.users.exceptions.UserAlreadyExistException;
 import com.twitter.users.exceptions.UserNameNullException;
 import com.twitter.users.exceptions.UserNotFoundException;
-import com.twitter.users.repository.User;
+import com.twitter.users.model.User;
 import com.twitter.users.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

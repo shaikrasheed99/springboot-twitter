@@ -2,9 +2,9 @@ package com.twitter.tweets.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.twitter.helpers.SuccessResponse;
-import com.twitter.tweets.repository.Tweet;
+import com.twitter.tweets.model.Tweet;
 import com.twitter.tweets.service.TweetService;
-import com.twitter.users.repository.User;
+import com.twitter.users.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,6 +1,6 @@
-package com.twitter.tweets.repository;
+package com.twitter.tweets.model;
 
-import com.twitter.users.repository.User;
+import com.twitter.users.model.User;
 
 import javax.persistence.*;
 

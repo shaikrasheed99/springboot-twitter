@@ -1,4 +1,4 @@
-package com.twitter.users.repository;
+package com.twitter.users.model;
 
 import org.springframework.data.repository.CrudRepository;
 

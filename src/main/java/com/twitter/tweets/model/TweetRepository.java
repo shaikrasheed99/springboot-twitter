@@ -1,4 +1,4 @@
-package com.twitter.tweets.repository;
+package com.twitter.tweets.model;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
