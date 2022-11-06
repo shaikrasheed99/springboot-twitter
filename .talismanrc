@@ -9,4 +9,8 @@ fileignoreconfig:
   checksum: bb1dabe1cb7c5738d910ccb1585395795a271527f5a3c319b652093eb4458bdc
 - filename: src/main/java/com/twitter/follows/model/FollowsCompositePrimaryKey.java
   checksum: eee914a1825e93c6b72271ed435508638dcffbcc7c5a36eebda5f9433cc110d6
+- filename: src/main/java/com/twitter/follows/service/FollowService.java
+  checksum: 6e59e9829a63de234dd0dc2daef6c0618767bb52f309c55df85a41fc4d833818
+- filename: src/test/java/com/twitter/follows/service/FollowServiceTest.java
+  checksum: 39fe78f84afc861b3835f8101a71b3a88bc06ab4e3f32d719c8d257aa5857291
 version: ""
