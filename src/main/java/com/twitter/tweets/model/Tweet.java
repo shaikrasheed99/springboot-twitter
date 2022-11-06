@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Table(name = "tweets")
 public class Tweet {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String description;
     @ManyToOne
@@ -16,6 +16,12 @@ public class Tweet {
     private User user;
 
     public Tweet() {
+    }
+
+    public Tweet(int id, String description, User user) {
+        this.id = id;
+        this.description = description;
+        this.user = user;
     }
 
     public Tweet(String description, User user) {
