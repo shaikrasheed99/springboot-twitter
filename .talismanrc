@@ -3,4 +3,6 @@ fileignoreconfig:
   checksum: 08158dd9fcd3b260f91f57b31130d739c5f9cee4a11b157034506c5a5a274da7
 - filename: src/main/resources/db/migration/V1.2__CreateTableTweets.sql
   checksum: a1139d0b5a8057072e8485029ae73349ec8e8ec186b2e21c926fa7b31f222c42
+- filename: src/main/resources/db/migration/V1.3__CreateTableFollows.sql
+  checksum: 86f603b4da266df0799e209a5c5ac36251e182859147d71071c3a661cfe2c715
 version: ""
