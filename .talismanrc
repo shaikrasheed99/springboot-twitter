@@ -5,4 +5,8 @@ fileignoreconfig:
   checksum: a1139d0b5a8057072e8485029ae73349ec8e8ec186b2e21c926fa7b31f222c42
 - filename: src/main/resources/db/migration/V1.3__CreateTableFollows.sql
   checksum: 86f603b4da266df0799e209a5c5ac36251e182859147d71071c3a661cfe2c715
+- filename: src/main/java/com/twitter/follows/model/Follow.java
+  checksum: bb1dabe1cb7c5738d910ccb1585395795a271527f5a3c319b652093eb4458bdc
+- filename: src/main/java/com/twitter/follows/model/FollowsCompositePrimaryKey.java
+  checksum: eee914a1825e93c6b72271ed435508638dcffbcc7c5a36eebda5f9433cc110d6
 version: ""
