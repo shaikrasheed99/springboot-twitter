@@ -1,6 +1,7 @@
 package com.twitter.follows.service;
 
 import com.twitter.follows.exceptions.UserAlreadyFollowingException;
+import com.twitter.follows.exceptions.UserNotFollowingException;
 import com.twitter.follows.model.Follow;
 import com.twitter.follows.model.FollowRepository;
 import com.twitter.follows.model.FollowsCompositePrimaryKey;
@@ -134,11 +135,23 @@ public class FollowServiceTest {
     void shouldBeAbleToUnfollowAUser() {
         when(userService.getUserById(follower.getId())).thenReturn(follower);
         when(userService.getUserById(follows.getId())).thenReturn(follows);
+        when(followRepository.findById(any(FollowsCompositePrimaryKey.class))).thenReturn(Optional.ofNullable(follow));
 
         followService.unfollow(follower.getId(), follows.getId());
 
         verify(followRepository, times(1)).delete(any(Follow.class));
         verify(userService, times(1)).getUserById(follower.getId());
         verify(userService, times(1)).getUserById(follows.getId());
+    }
+
+    @Test
+    void shouldBeAbleToThrowExceptionWhenUserIsNotFollowingAnotherUser() {
+        when(userService.getUserById(follower.getId())).thenReturn(follower);
+        when(userService.getUserById(follows.getId())).thenReturn(follows);
+        when(followRepository.findById(any(FollowsCompositePrimaryKey.class))).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFollowingException.class, () -> followService.unfollow(follower.getId(), follows.getId()));
+
+        verify(followRepository, times(1)).findById(any(FollowsCompositePrimaryKey.class));
     }
 }

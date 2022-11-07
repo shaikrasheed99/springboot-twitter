@@ -1,6 +1,7 @@
 package com.twitter.follows.service;
 
 import com.twitter.follows.exceptions.UserAlreadyFollowingException;
+import com.twitter.follows.exceptions.UserNotFollowingException;
 import com.twitter.follows.model.Follow;
 import com.twitter.follows.model.FollowRepository;
 import com.twitter.follows.model.FollowsCompositePrimaryKey;
@@ -46,6 +47,7 @@ public class FollowService {
         User follower = userService.getUserById(followerId);
         User follows = userService.getUserById(followsId);
         FollowsCompositePrimaryKey primaryKey = new FollowsCompositePrimaryKey(follower, follows);
+        if (!isFollowing(primaryKey)) throw new UserNotFollowingException("User is not following!");
         Follow follow = new Follow(primaryKey);
         followRepository.delete(follow);
     }
