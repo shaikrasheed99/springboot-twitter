@@ -11,6 +11,6 @@ public interface FollowRepository extends CrudRepository<Follow, FollowsComposit
     @Query(value = "SELECT * FROM users WHERE id IN (SELECT follower_id FROM follows WHERE follows_id = :id)", nativeQuery = true)
     List<User> findFollowers(@Param("id") int id);
 
-    @Query(value = "SELECT * FROM users WHERE id IN (SELECT follows_id FROM follows WHERE follower_id = :id")
+    @Query(value = "SELECT * FROM users WHERE id IN (SELECT follows_id FROM follows WHERE follower_id = :id", nativeQuery = true)
     List<User> findFollows(@Param("id") int id);
 }
