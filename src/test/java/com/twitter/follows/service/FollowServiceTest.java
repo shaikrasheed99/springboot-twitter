@@ -1,5 +1,6 @@
 package com.twitter.follows.service;
 
+import com.twitter.follows.exceptions.UserAlreadyFollowingException;
 import com.twitter.follows.model.Follow;
 import com.twitter.follows.model.FollowRepository;
 import com.twitter.follows.model.FollowsCompositePrimaryKey;
@@ -15,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -33,12 +35,13 @@ public class FollowServiceTest {
     private User follower;
     private User follows;
     private Follow follow;
+    private FollowsCompositePrimaryKey primaryKey;
 
     @BeforeEach
     void setUp() {
         follower = new User(1, "ironman");
         follows = new User(2, "Thor");
-        FollowsCompositePrimaryKey primaryKey = new FollowsCompositePrimaryKey(follower, follows);
+        primaryKey = new FollowsCompositePrimaryKey(follower, follows);
         follow = new Follow(primaryKey);
     }
 
@@ -56,6 +59,15 @@ public class FollowServiceTest {
         verify(userService, times(1)).getUserById(follower.getId());
         verify(userService, times(1)).getUserById(follows.getId());
         verify(followRepository, times(1)).save(any(Follow.class));
+    }
+
+    @Test
+    void shouldBeAbleToThrowExceptionWhenAUserIsAlreadyFollowingAnotherUser() {
+        when(followRepository.findById(any(FollowsCompositePrimaryKey.class))).thenReturn(Optional.ofNullable(follow));
+
+        assertThrows(UserAlreadyFollowingException.class, () -> followService.follow(follower.getId(), follows.getId()));
+
+        verify(followRepository, times(1)).findById(any(FollowsCompositePrimaryKey.class));
     }
 
     @Test
