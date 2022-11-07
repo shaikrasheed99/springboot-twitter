@@ -8,6 +8,8 @@ import com.twitter.users.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class FollowService {
     private final FollowRepository followRepository;
@@ -25,5 +27,15 @@ public class FollowService {
         FollowsCompositePrimaryKey primaryKey = new FollowsCompositePrimaryKey(follower, follows);
         Follow follow = new Follow(primaryKey);
         return followRepository.save(follow);
+    }
+
+    public List<User> getFollowers(int id) {
+        userService.getUserById(id);
+        return followRepository.findFollowers(id);
+    }
+
+    public List<User> getFollows(int id) {
+        userService.getUserById(id);
+        return followRepository.findFollows(id);
     }
 }

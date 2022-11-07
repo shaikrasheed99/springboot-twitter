@@ -13,6 +13,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -73,5 +76,45 @@ public class FollowServiceTest {
 
         verify(userService, times(1)).getUserById(follower.getId());
         verify(userService, times(1)).getUserById(follows.getId());
+    }
+
+    @Test
+    void shouldBeAbleToReturnFollowersOfAUser() {
+        ArrayList<User> followers = new ArrayList<>();
+        followers.add(follows);
+        when(followRepository.findFollowers(follower.getId())).thenReturn(followers);
+
+        List<User> listOfFollowers = followService.getFollowers(follower.getId());
+
+        assertEquals(listOfFollowers.size(), followers.size());
+
+        verify(followRepository, times(1)).findFollowers(follower.getId());
+    }
+
+    @Test
+    void shouldBeAbleToThrowExceptionWhenFollowerIdIsNotPresentInUsersTable() {
+        when(followRepository.findFollowers(follower.getId())).thenThrow(UserNotFoundException.class);
+
+        assertThrows(UserNotFoundException.class, () -> followService.getFollowers(follower.getId()));
+    }
+
+    @Test
+    void shouldBeAbleToReturnFollowsOfAUser() {
+        ArrayList<User> followings = new ArrayList<>();
+        followings.add(follower);
+        when(followRepository.findFollows(follows.getId())).thenReturn(followings);
+
+        List<User> listOfFollows = followService.getFollows(follows.getId());
+
+        assertEquals(listOfFollows.size(), followings.size());
+
+        verify(followRepository, times(1)).findFollows(follows.getId());
+    }
+
+    @Test
+    void shouldBeAbleToThrowExceptionWhenFollowsIdIsNotPresentInUsersTable() {
+        when(followRepository.findFollowers(follows.getId())).thenThrow(UserNotFoundException.class);
+
+        assertThrows(UserNotFoundException.class, () -> followService.getFollowers(follows.getId()));
     }
 }
