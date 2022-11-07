@@ -117,4 +117,16 @@ public class FollowServiceTest {
 
         assertThrows(UserNotFoundException.class, () -> followService.getFollowers(follows.getId()));
     }
+
+    @Test
+    void shouldBeAbleToUnfollowAUser() {
+        when(userService.getUserById(follower.getId())).thenReturn(follower);
+        when(userService.getUserById(follows.getId())).thenReturn(follows);
+
+        followService.unfollow(follower.getId(), follows.getId());
+
+        verify(followRepository, times(1)).delete(any(Follow.class));
+        verify(userService, times(1)).getUserById(follower.getId());
+        verify(userService, times(1)).getUserById(follows.getId());
+    }
 }

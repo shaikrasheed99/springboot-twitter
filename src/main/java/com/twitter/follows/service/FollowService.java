@@ -38,4 +38,12 @@ public class FollowService {
         userService.getUserById(id);
         return followRepository.findFollows(id);
     }
+
+    public void unfollow(int followerId, int followsId) {
+        User follower = userService.getUserById(followerId);
+        User follows = userService.getUserById(followsId);
+        FollowsCompositePrimaryKey primaryKey = new FollowsCompositePrimaryKey(follower, follows);
+        Follow follow = new Follow(primaryKey);
+        followRepository.delete(follow);
+    }
 }
