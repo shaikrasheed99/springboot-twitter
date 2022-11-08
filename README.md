@@ -18,7 +18,7 @@
 ### Create a User
 
 * Request
-```json
+```
 POST /users 
 Host: localhost:3000
 Content-Type: application/json
@@ -28,7 +28,7 @@ Content-Type: application/json
 }
 ```
 * Response
-```json
+```
 Status code: 201 Created
 Body: 
 {
@@ -41,7 +41,7 @@ Body:
 ### If we try to provide empty User’s name in the request body
 
 * Request
-```json
+```
 POST /users 
 Host: localhost:3000
 Content-Type: application/json
@@ -50,7 +50,7 @@ Content-Type: application/json
 }
 ```
 * Response
-```json
+```
 Status code: 400 Bad Request
 Body:
 {
@@ -63,7 +63,7 @@ Body:
 ### If the User is already exists
 
 * Request
-```json
+```
 POST /users 
 Host: localhost:3000
 Content-Type: application/json
@@ -73,7 +73,7 @@ Content-Type: application/json
 }
 ```
 * Response
-```json
+```
 Status code: 400 Bad Request
 Body:
 {
@@ -86,12 +86,12 @@ Body:
 ### Get User details by User Id
 
 * Request
-```json
+```
 GET /users/{1}
 Host: localhost:3000
 ```
 * Response
-```json
+```
 Status code: 200 OK
 Body:
 {
@@ -105,12 +105,12 @@ Body:
 ### If we try to provide not existed User Id in the path url
 
 * Request
-```json
+```
 GET /users/{1}
 Host: localhost:3000
 ```
 * Response
-```json
+```
 Status code: 404 Not Found
 Body:
 {
@@ -125,7 +125,7 @@ Body:
 ### Post a Tweet
 
 * Request
-```json
+```
 POST /users/{1}/tweets
 Host: localhost:3000
 Content-Type: application/json
@@ -134,7 +134,7 @@ Content-Type: application/json
 }
 ```
 * Response
-```json
+```
 Status code: 201 Created
 Body:
 {
@@ -147,7 +147,7 @@ Body:
 ### If we try to provide empty Tweet’s description in the request body
 
 * Request
-```json
+```
 POST /users/{1}/tweets
 Host: localhost:3000
 Content-Type: application/json
@@ -156,7 +156,7 @@ Content-Type: application/json
 }
 ```
 * Response
-```json
+```
 Status code: 400 Bad Request
 Body:
 {
@@ -169,7 +169,7 @@ Body:
 ### If we try to provide not existed User Id in the path url
 
 * Request
-```json
+```
 POST /users/{1}/tweets
 Host: localhost:3000
 Content-Type: application/json
@@ -178,7 +178,7 @@ Content-Type: application/json
 }
 ```
 * Response
-```json
+```
 Status code: 404 Not Found
 Body:
 {
@@ -191,12 +191,12 @@ Body:
 ### Get Tweets by User Id
 
 * Request
-```json
+```
 GET /users/{1}/tweets
 Host: localhost:3000
 ```
 * Response
-```json
+```
 Status code: 200 OK
 Body:
 {
@@ -220,12 +220,12 @@ Body:
 ### Get Tweet details of a User by Tweet Id
 
 * Request
-```json
+```
 GET /users/{1}/tweets/{22}
 Host: localhost:3000
 ```
 * Response
-```json
+```
 Status code: 200 OK
 Body:
 {
@@ -241,12 +241,12 @@ Body:
 ### If we provide not existed Tweet Id in the path url
 
 * Request
-```json
+```
 GET /users/{1}/tweets/{220}
 Host: localhost:3000
 ```
 * Response
-```json
+```
 Status code: 404 Not Found
 Body:
 {
@@ -259,12 +259,12 @@ Body:
 ### If we try to find another User’s Tweet details by Tweet Id in path url
 
 * Request
-```json
+```
 GET /users/{1}/tweets/{22}
 Host: localhost:3000
 ```
 * Response
-```json
+```
 Status code: 403 Forbidden
 Body:
 {
@@ -279,7 +279,7 @@ Body:
 ### Follow a User
 
 * Request
-```json
+```
 POST /users/{1}/follow
 Host: localhost:3000
 Content-Type: application/json
@@ -288,7 +288,7 @@ Content-Type: application/json
 }
 ```
 * Response
-```json
+```
 Status code: 200 OK
 Body:
 {
@@ -302,7 +302,7 @@ Body:
 ### If we try to provide same User Id as follower Id and follows Id to follow
 
 * Request
-```json
+```
 POST /users/{1}/follow
 Host: localhost:3000
 Content-Type: application/json
@@ -311,7 +311,7 @@ Content-Type: application/json
 }
 ```
 * Response
-```json
+```
 Status code: 400 Bad Request
 Body:
 {
@@ -324,7 +324,7 @@ Body:
 ### If we try to provide not existed User Id in the path url as follower Id
 
 * Request
-```json
+```
 POST /users/{1}/follow
 Host: localhost:3000
 Content-Type: application/json
@@ -333,7 +333,7 @@ Content-Type: application/json
 }
 ```
 * Response
-```json
+```
 Status code: 404 Not Found
 Body:
 {
@@ -346,7 +346,7 @@ Body:
 ### If we try to provide not existed User Id in the request body as follows Id
 
 * Request
-```json
+```
 POST /users/{1}/follow
 Host: localhost:3000
 Content-Type: application/json
@@ -355,7 +355,7 @@ Content-Type: application/json
 }
 ```
 * Response
-```json
+```
 Status code: 404 Not Found
 Body:
 {
@@ -368,7 +368,7 @@ Body:
 ### If we try to provide User Id as follows Id who is already following
 
 * Request
-```json
+```
 POST /users/{1}/follow
 Host: localhost:3000
 Content-Type: application/json
@@ -377,7 +377,7 @@ Content-Type: application/json
 }
 ```
 * Response
-```json
+```
 Status code: 400 Bad Request
 Body:
 {
@@ -390,12 +390,12 @@ Body:
 ### Get Followers of a User by User Id
 
 * Request
-```json
+```
 GET /users/{1}/followers
 Host: localhost:3000
 ```
 * Response
-```json
+```
 Status code: 200 OK
 Body:
 {
@@ -418,12 +418,12 @@ Body:
 ### If we try to provide not existed User Id in the path url
 
 * Request
-```json
+```
 GET /users/{1}/followers
 Host: localhost:3000
 ```
 * Response
-```json
+```
 Status code: 404 Not Found
 Body:
 {
@@ -436,12 +436,12 @@ Body:
 ### Get Follows of a User by User Id
 
 * Request
-```json
+```
 GET /users/{1}/follows
 Host: localhost:3000
 ```
 * Response
-```json
+```
 Status code: 200 OK
 Body:
 {
@@ -472,12 +472,12 @@ Body:
 ### If we try to provide not existed User Id in the path url
 
 * Request
-```json
+```
 GET /users/{1}/follows
 Host: localhost:3000
 ```
 * Response
-```json
+```
 Status code: 404 Not Found
 Body:
 {
@@ -490,7 +490,7 @@ Body:
 ### Unfollow a User
 
 * Request
-```json
+```
 POST /users/{1}/unfollow
 Host: localhost:3000
 Content-Type: application/json
@@ -499,7 +499,7 @@ Content-Type: application/json
 }
 ```
 * Response
-```json
+```
 Status code: 200 OK
 Body:
 {
@@ -512,7 +512,7 @@ Body:
 ### If we try to provide same User Id as follower Id and follows Id to unfollow
 
 * Request
-```json
+```
 POST /users/{1}/unfollow
 Host: localhost:3000
 Content-Type: application/json
@@ -521,7 +521,7 @@ Content-Type: application/json
 }
 ```
 * Response
-```json
+```
 Status code: 400 Bad Request
 Body:
 {
@@ -534,7 +534,7 @@ Body:
 ### If we try to provide User Id as follows Id who is not following
 
 * Request
-```json
+```
 POST /users/{1}/unfollow
 Host: localhost:3000
 Content-Type: application/json
@@ -543,7 +543,7 @@ Content-Type: application/json
 }
 ```
 * Response
-```json
+```
 Status code: 400 Bad Request
 Body:
 {
