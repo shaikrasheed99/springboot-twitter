@@ -138,7 +138,10 @@ public class FollowServiceTest {
         when(userService.getUserById(follows.getId())).thenReturn(follows);
         when(followRepository.findById(any(FollowsCompositePrimaryKey.class))).thenReturn(Optional.ofNullable(follow));
 
-        followService.unfollow(follower.getId(), follows.getId());
+        Follow unfollow = followService.unfollow(follower.getId(), follows.getId());
+
+        assertEquals(unfollow.getFollowsCompositePrimaryKey().getFollower(), follower);
+        assertEquals(unfollow.getFollowsCompositePrimaryKey().getFollows(), follows);
 
         verify(followRepository, times(1)).delete(any(Follow.class));
         verify(userService, times(1)).getUserById(follower.getId());

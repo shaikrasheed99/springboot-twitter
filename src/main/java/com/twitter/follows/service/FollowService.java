@@ -44,13 +44,14 @@ public class FollowService {
         return followRepository.findFollows(id);
     }
 
-    public void unfollow(int followerId, int followsId) {
+    public Follow unfollow(int followerId, int followsId) {
         User follower = userService.getUserById(followerId);
         User follows = userService.getUserById(followsId);
         FollowsCompositePrimaryKey primaryKey = new FollowsCompositePrimaryKey(follower, follows);
         if (!isFollowing(primaryKey)) throw new UserNotFollowingException("User is not following!");
         Follow follow = new Follow(primaryKey);
         followRepository.delete(follow);
+        return follow;
     }
 
     private boolean isFollowing(FollowsCompositePrimaryKey primaryKey) {
