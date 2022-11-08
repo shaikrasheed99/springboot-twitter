@@ -15,22 +15,12 @@ public class FollowExceptionHandler {
     @Autowired
     private ErrorResponse errorResponse;
 
-    @ExceptionHandler(value = {UserAlreadyFollowingException.class})
-    public ResponseEntity<?> handleUserAlreadyFollowingException(Exception exception) throws JsonProcessingException {
-        errorResponse.setError(Collections.singletonMap("message", exception.getMessage()));
-        String responseJson = errorResponse.convertToJson();
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseJson);
-    }
-
-    @ExceptionHandler(value = {UserNotFollowingException.class})
-    public ResponseEntity<?> handleUserNotFollowingException(Exception exception) throws JsonProcessingException {
-        errorResponse.setError(Collections.singletonMap("message", exception.getMessage()));
-        String responseJson = errorResponse.convertToJson();
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseJson);
-    }
-
-    @ExceptionHandler(value = {UserIdsAreSame.class})
-    public ResponseEntity<?> handleUserIdsAreSame(Exception exception) throws JsonProcessingException {
+    @ExceptionHandler(value = {
+            UserAlreadyFollowingException.class,
+            UserNotFollowingException.class,
+            UserIdsAreSame.class
+    })
+    public ResponseEntity<?> handleMultipleExceptions(Exception exception) throws JsonProcessingException {
         errorResponse.setError(Collections.singletonMap("message", exception.getMessage()));
         String responseJson = errorResponse.convertToJson();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseJson);
