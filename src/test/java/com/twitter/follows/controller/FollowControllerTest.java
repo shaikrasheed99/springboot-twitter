@@ -173,7 +173,7 @@ public class FollowControllerTest {
                 .content(requestJson));
 
         result.andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.message").value("User Id 1 unfollowed User Id 2!"))
+                .andExpect(jsonPath("$.data.message").value("User Id = 1 unfollowed User Id = 2"))
                 .andDo(print());
 
         verify(followService, times(1)).unfollow(ironman.getId(), thor.getId());

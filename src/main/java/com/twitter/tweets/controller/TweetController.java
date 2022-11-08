@@ -27,17 +27,17 @@ public class TweetController {
         this.tweetService = tweetService;
     }
 
-    @PostMapping("/{id}/tweets")
-    public ResponseEntity<?> create(@PathVariable int id, @RequestBody TweetRequestBody tweetRequestBody) throws JsonProcessingException {
-        Tweet tweet = tweetService.create(tweetRequestBody.getDescription(), id);
+    @PostMapping("/{userId}/tweets")
+    public ResponseEntity<?> create(@PathVariable int userId, @RequestBody TweetRequestBody tweetRequestBody) throws JsonProcessingException {
+        Tweet tweet = tweetService.create(tweetRequestBody.getDescription(), userId);
         successResponse.setData(Collections.singletonMap("tweet_id", tweet.getId()));
         String responseJson = successResponse.convertToJson();
         return ResponseEntity.status(HttpStatus.CREATED).body(responseJson);
     }
 
-    @GetMapping("/{id}/tweets")
-    public ResponseEntity<?> getByUserId(@PathVariable int id) throws JsonProcessingException {
-        List<Tweet> tweetsByUserId = tweetService.getByAuthorId(id);
+    @GetMapping("/{userId}/tweets")
+    public ResponseEntity<?> getByUserId(@PathVariable int userId) throws JsonProcessingException {
+        List<Tweet> tweetsByUserId = tweetService.getByAuthorId(userId);
 
         ArrayList<TweetResponseBody> tweets = new ArrayList<>();
         tweetsByUserId.forEach(tweet -> {
@@ -51,9 +51,9 @@ public class TweetController {
         return ResponseEntity.status(HttpStatus.OK).body(responseJson);
     }
 
-    @GetMapping("/{id}/tweets/{tweetId}")
-    public ResponseEntity<?> getById(@PathVariable int id, @PathVariable int tweetId) throws JsonProcessingException {
-        Tweet tweet = tweetService.getByAuthorIdAndTweetId(id, tweetId);
+    @GetMapping("/{userId}/tweets/{tweetId}")
+    public ResponseEntity<?> getById(@PathVariable int userId, @PathVariable int tweetId) throws JsonProcessingException {
+        Tweet tweet = tweetService.getByAuthorIdAndTweetId(userId, tweetId);
 
         User author = tweet.getUser();
         TweetResponseBody tweetResponseBody = new TweetResponseBody(tweet.getId(), tweet.getDescription(), author.getId(), author.getName());
