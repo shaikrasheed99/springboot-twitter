@@ -5,6 +5,7 @@ import com.twitter.follows.exceptions.UserNotFollowingException;
 import com.twitter.follows.model.Follow;
 import com.twitter.follows.model.FollowRepository;
 import com.twitter.follows.model.FollowsCompositePrimaryKey;
+import com.twitter.users.model.IUser;
 import com.twitter.users.model.User;
 import com.twitter.users.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,12 +34,12 @@ public class FollowService {
         return followRepository.save(follow);
     }
 
-    public List<User> getFollowers(int id) {
+    public List<IUser> followers(int id) {
         userService.getUserById(id);
         return followRepository.findFollowers(id);
     }
 
-    public List<User> getFollows(int id) {
+    public List<IUser> follows(int id) {
         userService.getUserById(id);
         return followRepository.findFollows(id);
     }
