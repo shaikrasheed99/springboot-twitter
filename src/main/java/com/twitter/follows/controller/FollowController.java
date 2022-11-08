@@ -66,7 +66,7 @@ public class FollowController {
     @PostMapping("/{userId}/unfollow")
     public ResponseEntity<?> unfollow(@PathVariable int userId, @RequestBody FollowAndUnfollowRequestBody followAndUnfollowRequestBody) throws JsonProcessingException {
         Follow unfollow = followService.unfollow(userId, followAndUnfollowRequestBody.getFollowsId());
-        String message = "User Id " + userId + " unfollowed User Id " + followAndUnfollowRequestBody.getFollowsId() + "!";
+        String message = "User Id = " + userId + " unfollowed User Id = " + followAndUnfollowRequestBody.getFollowsId();
         successResponse.setData(Collections.singletonMap("message", message));
         String responseJson = successResponse.convertToJson();
         return ResponseEntity.status(HttpStatus.OK).body(responseJson);

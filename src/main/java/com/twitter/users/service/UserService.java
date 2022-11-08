@@ -1,8 +1,8 @@
 package com.twitter.users.service;
 
+import com.twitter.users.exceptions.UserAlreadyExistException;
 import com.twitter.users.exceptions.UserNameNullException;
 import com.twitter.users.exceptions.UserNotFoundException;
-import com.twitter.users.exceptions.UserAlreadyExistException;
 import com.twitter.users.model.User;
 import com.twitter.users.model.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,8 @@ public class UserService {
 
         Optional<User> existedUser = userRepository.findById(user.getId());
 
-        if (existedUser.isPresent()) throw new UserAlreadyExistException("User is already exists!");
+        if (existedUser.isPresent())
+            throw new UserAlreadyExistException("User is already exists with id = " + user.getId());
 
         return userRepository.save(user);
     }
@@ -34,7 +35,7 @@ public class UserService {
     public User getById(int id) {
         Optional<User> user = userRepository.findById(id);
 
-        if (user.isEmpty()) throw new UserNotFoundException("User not found with that id!");
+        if (user.isEmpty()) throw new UserNotFoundException("User not found with id = " + id);
 
         return user.get();
     }

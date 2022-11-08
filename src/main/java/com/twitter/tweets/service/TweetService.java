@@ -40,7 +40,7 @@ public class TweetService {
     public Tweet getById(int id) {
         Optional<Tweet> tweet = tweetRepository.findById(id);
 
-        if (tweet.isEmpty()) throw new TweetNotFoundException("Tweet is not found with that id!");
+        if (tweet.isEmpty()) throw new TweetNotFoundException("Tweet is not found with tweet id = " + id);
 
         return tweet.get();
     }
@@ -50,7 +50,7 @@ public class TweetService {
         Tweet tweet = getById(tweetId);
 
         if (tweet.getUser().getId() != authorId)
-            throw new AuthorMismatchException("Author cannot see another author's complete tweet details!");
+            throw new AuthorMismatchException("Author cannot see another author's tweet details!");
 
         return tweet;
     }

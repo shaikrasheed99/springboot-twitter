@@ -29,14 +29,15 @@ public class FollowService {
 
     public Follow follow(int followerId, int followsId) {
         if (areUserIdsEqual(followerId, followsId))
-            throw new UserIdsAreSameException("User id " + followerId + " cannot follow itself!");
+            throw new UserIdsAreSameException("User id = " + followerId + " cannot follow itself!");
 
         User follower = getUserWith(followerId, "follower Id");
         User follows = getUserWith(followsId, "follows Id");
 
         FollowsCompositePrimaryKey primaryKey = new FollowsCompositePrimaryKey(follower, follows);
 
-        if (isFollowing(primaryKey)) throw new UserAlreadyFollowingException("User is already following!");
+        if (isFollowing(primaryKey))
+            throw new UserAlreadyFollowingException("User Id = " + followerId + " is already following User Id = " + followsId);
         Follow follow = new Follow(primaryKey);
 
         return followRepository.save(follow);
@@ -54,14 +55,15 @@ public class FollowService {
 
     public Follow unfollow(int followerId, int followsId) {
         if (areUserIdsEqual(followerId, followsId))
-            throw new UserIdsAreSameException("User id " + followerId + " cannot unfollow itself!");
+            throw new UserIdsAreSameException("User id = " + followerId + " cannot unfollow itself!");
 
         User follower = getUserWith(followerId, "follower Id");
         User follows = getUserWith(followsId, "follows Id");
 
         FollowsCompositePrimaryKey primaryKey = new FollowsCompositePrimaryKey(follower, follows);
 
-        if (!isFollowing(primaryKey)) throw new UserNotFollowingException("User is not following!");
+        if (!isFollowing(primaryKey))
+            throw new UserNotFollowingException("User Id = " + followerId + " is not following User Id = " + followsId);
         Follow follow = new Follow(primaryKey);
 
         followRepository.delete(follow);
@@ -78,7 +80,7 @@ public class FollowService {
         try {
             user = userService.getById(id);
         } catch (Exception exception) {
-            throw new UserNotFoundException("User is not found with that " + customMessage + ": " + id);
+            throw new UserNotFoundException("User is not found with " + customMessage + " = " + id);
         }
         return user;
     }
