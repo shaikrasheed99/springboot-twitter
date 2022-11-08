@@ -15,4 +15,6 @@ fileignoreconfig:
   checksum: bbe592403031155749e766722ef2d0698b6230eb23a9492ba0edd47dd2563547
 - filename: src/test/java/com/twitter/follows/controller/FollowControllerTest.java
   checksum: e3beaf263e82868dfc7ef0f1cbc8ac708e9abda112432ed12f7a3e666b036faa
+- filename: src/test/java/com/twitter/follows/model/FollowRepositoryTest.java
+  checksum: 7d97c2a15e832859f66c9816dc5280fd1820b30a9ff92488b553d409f242a825
 version: ""
