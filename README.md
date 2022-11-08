@@ -13,9 +13,9 @@
     - Read Follows of a User
     - Unfollow a User
 
-## User APIs
+## Users APIs
 
-### Create a User
+### Users - Create a User
 
 * Request
 ```
@@ -38,7 +38,7 @@ Body:
 }
 ```
 
-### If we try to provide empty User’s name in the request body
+### Users - If we try to provide empty User’s name in the request body
 
 * Request
 ```
@@ -60,7 +60,7 @@ Body:
 }
 ```
 
-### If the User is already exists
+### Users - If the User is already exists
 
 * Request
 ```
@@ -83,7 +83,7 @@ Body:
 }
 ```
 
-### Get User details by User Id
+### Users - Get User details by User Id
 
 * Request
 ```
@@ -102,7 +102,7 @@ Body:
 }
 ```
 
-### If we try to provide not existed User Id in the path url
+### Users - If we try to provide not existed User Id in the path url
 
 * Request
 ```
@@ -120,9 +120,9 @@ Body:
 }
 ```
 
-## Tweet APIs
+## Tweets APIs
 
-### Post a Tweet
+### Tweets - Post a Tweet
 
 * Request
 ```
@@ -144,7 +144,7 @@ Body:
 }
 ```
 
-### If we try to provide empty Tweet’s description in the request body
+### Tweets - If we try to provide empty Tweet’s description in the request body
 
 * Request
 ```
@@ -166,7 +166,7 @@ Body:
 }
 ```
 
-### If we try to provide not existed User Id in the path url
+### Tweets - If we try to provide not existed User Id in the path url
 
 * Request
 ```
@@ -188,7 +188,7 @@ Body:
 }
 ```
 
-### Get Tweets by User Id
+### Tweets - Get Tweets by User Id
 
 * Request
 ```
@@ -217,7 +217,7 @@ Body:
 }
 ```
 
-### Get Tweet details of a User by Tweet Id
+### Tweets - Get Tweet details of a User by Tweet Id
 
 * Request
 ```
@@ -238,7 +238,7 @@ Body:
 }
 ```
 
-### If we provide not existed Tweet Id in the path url
+### Tweets - If we provide not existed Tweet Id in the path url
 
 * Request
 ```
@@ -256,7 +256,7 @@ Body:
 }
 ```
 
-### If we try to find another User’s Tweet details by Tweet Id in path url
+### Tweets - If we try to find another User’s Tweet details by Tweet Id in path url
 
 * Request
 ```
@@ -274,9 +274,9 @@ Body:
 }
 ```
 
-## Follow APIs
+## Follows APIs
 
-### Follow a User
+### Follows - Follow a User
 
 * Request
 ```
@@ -299,7 +299,7 @@ Body:
 }
 ```
 
-### If we try to provide same User Id as follower Id and follows Id to follow
+### Follows - If we try to provide same User Id as follower Id and follows Id to follow
 
 * Request
 ```
@@ -321,7 +321,7 @@ Body:
 }
 ```
 
-### If we try to provide not existed User Id in the path url as follower Id
+### Follows - If we try to provide not existed User Id in the path url as follower Id
 
 * Request
 ```
@@ -343,7 +343,7 @@ Body:
 }
 ```
 
-### If we try to provide not existed User Id in the request body as follows Id
+### Follows - If we try to provide not existed User Id in the request body as follows Id
 
 * Request
 ```
@@ -365,7 +365,7 @@ Body:
 }
 ```
 
-### If we try to provide User Id as follows Id who is already following
+### Follows - If we try to provide User Id as follows Id who is already following
 
 * Request
 ```
@@ -387,7 +387,7 @@ Body:
 }
 ```
 
-### Get Followers of a User by User Id
+### Follows - Get Followers of a User by User Id
 
 * Request
 ```
@@ -415,7 +415,7 @@ Body:
 }
 ```
 
-### If we try to provide not existed User Id in the path url
+### Follows - If we try to provide not existed User Id in the path url
 
 * Request
 ```
@@ -433,7 +433,7 @@ Body:
 }
 ```
 
-### Get Follows of a User by User Id
+### Follows - Get Follows of a User by User Id
 
 * Request
 ```
@@ -469,7 +469,7 @@ Body:
 }
 ```
 
-### If we try to provide not existed User Id in the path url
+### Follows - If we try to provide not existed User Id in the path url
 
 * Request
 ```
@@ -487,7 +487,7 @@ Body:
 }
 ```
 
-### Unfollow a User
+### Follow - Unfollow a User
 
 * Request
 ```
@@ -509,7 +509,7 @@ Body:
 }
 ```
 
-### If we try to provide same User Id as follower Id and follows Id to unfollow
+### Follows - If we try to provide same User Id as follower Id and follows Id to unfollow
 
 * Request
 ```
@@ -531,7 +531,7 @@ Body:
 }
 ```
 
-### If we try to provide User Id as follows Id who is not following
+### Follows - If we try to provide User Id as follows Id who is not following
 
 * Request
 ```
