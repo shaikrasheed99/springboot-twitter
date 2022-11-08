@@ -2,6 +2,7 @@ package com.twitter.follows.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.twitter.follows.exceptions.UserAlreadyFollowingException;
+import com.twitter.follows.exceptions.UserNotFollowingException;
 import com.twitter.follows.model.Follow;
 import com.twitter.follows.model.FollowsCompositePrimaryKey;
 import com.twitter.follows.service.FollowService;
@@ -119,5 +120,28 @@ public class FollowControllerTest {
         result.andExpect(status().isNotFound()).andExpect(jsonPath("$.error.message").value("User not found!")).andDo(print());
 
         verify(followService, times(1)).follows(follows.getId());
+    }
+
+    @Test
+    void shouldBeAbleToUnfollowAUser() throws Exception {
+        String requestJson = new ObjectMapper().writeValueAsString(followRequestBody);
+
+        ResultActions result = mockMvc.perform(post("/users/{userId}/unfollow", follower.getId()).contentType(MediaType.APPLICATION_JSON).content(requestJson));
+
+        result.andExpect(status().isOk()).andExpect(jsonPath("$.data.message").value("User Id 1 unfollowed User Id 2!")).andDo(print());
+
+        verify(followService, times(1)).unfollow(follower.getId(), follows.getId());
+    }
+
+    @Test
+    void shouldBeAbleToGiveBadRequestResponseWhenUserIsNotFollowingAnotherUser() throws Exception {
+        when(followService.unfollow(follower.getId(), follows.getId())).thenThrow(new UserNotFollowingException("User not following"));
+        String requestJson = new ObjectMapper().writeValueAsString(followRequestBody);
+
+        ResultActions result = mockMvc.perform(post("/users/{userId}/unfollow", follower.getId()).contentType(MediaType.APPLICATION_JSON).content(requestJson));
+
+        result.andExpect(status().isBadRequest()).andExpect(jsonPath("$.error.message").value("User not following")).andDo(print());
+
+        verify(followService, times(1)).unfollow(follower.getId(), follows.getId());
     }
 }

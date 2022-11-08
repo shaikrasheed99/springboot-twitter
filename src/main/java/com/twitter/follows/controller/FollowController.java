@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -58,6 +59,15 @@ public class FollowController {
         followsResponseBody.setCount(follows.size());
         followsResponseBody.setFollows(follows);
         successResponse.setData(followsResponseBody);
+        String responseJson = successResponse.convertToJson();
+        return ResponseEntity.status(HttpStatus.OK).body(responseJson);
+    }
+
+    @PostMapping("/{userId}/unfollow")
+    public ResponseEntity<?> unfollow(@PathVariable int userId, @RequestBody FollowRequestBody followRequestBody) throws JsonProcessingException {
+        Follow unfollow = followService.unfollow(userId, followRequestBody.getFollowsId());
+        String message = "User Id " + userId + " unfollowed User Id " + followRequestBody.getFollowsId() + "!";
+        successResponse.setData(Collections.singletonMap("message", message));
         String responseJson = successResponse.convertToJson();
         return ResponseEntity.status(HttpStatus.OK).body(responseJson);
     }

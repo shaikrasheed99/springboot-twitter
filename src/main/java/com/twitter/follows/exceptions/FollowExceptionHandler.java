@@ -21,4 +21,11 @@ public class FollowExceptionHandler {
         String responseJson = errorResponse.convertToJson();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseJson);
     }
+
+    @ExceptionHandler(value = {UserNotFollowingException.class})
+    public ResponseEntity<?> handleUserNotFollowingException(Exception exception) throws JsonProcessingException {
+        errorResponse.setError(Collections.singletonMap("message", exception.getMessage()));
+        String responseJson = errorResponse.convertToJson();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseJson);
+    }
 }
