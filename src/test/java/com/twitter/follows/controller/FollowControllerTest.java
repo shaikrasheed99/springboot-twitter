@@ -87,7 +87,7 @@ public class FollowControllerTest {
     }
 
     @Test
-    void shouldBeAbleToGiveNotFoundResponseWhenUserIdDoesNotExists() throws Exception {
+    void shouldBeAbleToGiveNotFoundErrorResponseWhenFollowerUserIdDoesNotExists() throws Exception {
         when(followService.followers(follower.getId())).thenThrow(new UserNotFoundException("User not found!"));
 
         ResultActions result = mockMvc.perform(get("/users/{userId}/followers", follower.getId()));
@@ -95,5 +95,29 @@ public class FollowControllerTest {
         result.andExpect(status().isNotFound()).andExpect(jsonPath("$.error.message").value("User not found!")).andDo(print());
 
         verify(followService, times(1)).followers(follower.getId());
+    }
+
+    @Test
+    void shouldBeAbleToReturnFollowsOfAUser() throws Exception {
+        ArrayList<IUser> followings = new ArrayList<>();
+        followings.add(follower);
+        when(followService.follows(follows.getId())).thenReturn(followings);
+
+        ResultActions result = mockMvc.perform(get("/users/{userId}/follows", follows.getId()));
+
+        result.andExpect(status().isOk()).andExpect(jsonPath("$.data.count").value(followings.size())).andExpect(jsonPath("$.data.follows[0].name").value(followings.get(0).getName())).andDo(print());
+
+        verify(followService, times(1)).follows(follows.getId());
+    }
+
+    @Test
+    void shouldBeAbleToGiveNotFoundErrorResponseWhenFollowsUserIdDoesNotExists() throws Exception {
+        when(followService.follows(follows.getId())).thenThrow(new UserNotFoundException("User not found!"));
+
+        ResultActions result = mockMvc.perform(get("/users/{userId}/follows", follows.getId()));
+
+        result.andExpect(status().isNotFound()).andExpect(jsonPath("$.error.message").value("User not found!")).andDo(print());
+
+        verify(followService, times(1)).follows(follows.getId());
     }
 }

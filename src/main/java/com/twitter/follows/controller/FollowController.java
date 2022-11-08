@@ -29,6 +29,8 @@ public class FollowController {
     private FollowResponseBody followResponseBody;
     @Autowired
     private FollowersResponseBody followersResponseBody;
+    @Autowired
+    private FollowsResponseBody followsResponseBody;
 
     @PostMapping("/{userId}/follow")
     public ResponseEntity<?> follow(@PathVariable int userId, @RequestBody FollowRequestBody followRequestBody) throws JsonProcessingException {
@@ -46,6 +48,16 @@ public class FollowController {
         followersResponseBody.setCount(followers.size());
         followersResponseBody.setFollowers(followers);
         successResponse.setData(followersResponseBody);
+        String responseJson = successResponse.convertToJson();
+        return ResponseEntity.status(HttpStatus.OK).body(responseJson);
+    }
+
+    @GetMapping("/{userId}/follows")
+    private ResponseEntity<?> follows(@PathVariable int userId) throws JsonProcessingException {
+        List<IUser> follows = followService.follows(userId);
+        followsResponseBody.setCount(follows.size());
+        followsResponseBody.setFollows(follows);
+        successResponse.setData(followsResponseBody);
         String responseJson = successResponse.convertToJson();
         return ResponseEntity.status(HttpStatus.OK).body(responseJson);
     }
