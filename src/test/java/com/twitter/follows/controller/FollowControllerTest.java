@@ -42,7 +42,7 @@ public class FollowControllerTest {
     private User thor;
     private User thanos;
     private List<IUser> users;
-    private FollowRequestBody followRequestBodyContainsThor;
+    private FollowAndUnfollowRequestBody followAndUnfollowRequestBodyContainsThor;
     private Follow ironmanFollowsThor;
 
     @BeforeEach
@@ -56,13 +56,13 @@ public class FollowControllerTest {
         users.add(thanos);
         FollowsCompositePrimaryKey ironmanThorKey = new FollowsCompositePrimaryKey(ironman, thor);
         ironmanFollowsThor = new Follow(ironmanThorKey);
-        followRequestBodyContainsThor = new FollowRequestBody(thor.getId());
+        followAndUnfollowRequestBodyContainsThor = new FollowAndUnfollowRequestBody(thor.getId());
     }
 
     @Test
     void shouldBeAbleToFollowAUser() throws Exception {
         when(followService.follow(ironman.getId(), thor.getId())).thenReturn(ironmanFollowsThor);
-        String requestJson = new ObjectMapper().writeValueAsString(followRequestBodyContainsThor);
+        String requestJson = new ObjectMapper().writeValueAsString(followAndUnfollowRequestBodyContainsThor);
 
         ResultActions result = mockMvc.perform(post("/users/{userId}/follow", ironman.getId())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -79,7 +79,7 @@ public class FollowControllerTest {
     @Test
     void shouldBeAbleToGiveBadRequestResponseWhenBothFollowerIdAndFollowsIdAreSameToFollow() throws Exception {
         when(followService.follow(thor.getId(), thor.getId())).thenThrow(new UserIdsAreSameException("Both ids are same!"));
-        String requestJson = new ObjectMapper().writeValueAsString(followRequestBodyContainsThor);
+        String requestJson = new ObjectMapper().writeValueAsString(followAndUnfollowRequestBodyContainsThor);
 
         ResultActions result = mockMvc.perform(post("/users/{userId}/follow", thor.getId())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -95,7 +95,7 @@ public class FollowControllerTest {
     @Test
     void shouldBeAbleToGiveBadRequestResponseWhenUserIsAlreadyFollowingAnotherUser() throws Exception {
         when(followService.follow(ironman.getId(), thor.getId())).thenThrow(new UserAlreadyFollowingException("User already following!"));
-        String requestJson = new ObjectMapper().writeValueAsString(followRequestBodyContainsThor);
+        String requestJson = new ObjectMapper().writeValueAsString(followAndUnfollowRequestBodyContainsThor);
 
         ResultActions result = mockMvc.perform(post("/users/{userId}/follow", ironman.getId())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -166,7 +166,7 @@ public class FollowControllerTest {
 
     @Test
     void shouldBeAbleToUnfollowAUser() throws Exception {
-        String requestJson = new ObjectMapper().writeValueAsString(followRequestBodyContainsThor);
+        String requestJson = new ObjectMapper().writeValueAsString(followAndUnfollowRequestBodyContainsThor);
 
         ResultActions result = mockMvc.perform(post("/users/{userId}/unfollow", ironman.getId())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -182,7 +182,7 @@ public class FollowControllerTest {
     @Test
     void shouldBeAbleToGiveBadRequestResponseWhenBothFollowerIdAndFollowsIdAreSameToUnFollow() throws Exception {
         when(followService.unfollow(thor.getId(), thor.getId())).thenThrow(new UserIdsAreSameException("Both ids are same!"));
-        String requestJson = new ObjectMapper().writeValueAsString(followRequestBodyContainsThor);
+        String requestJson = new ObjectMapper().writeValueAsString(followAndUnfollowRequestBodyContainsThor);
 
         ResultActions result = mockMvc.perform(post("/users/{userId}/unfollow", thor.getId())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -198,7 +198,7 @@ public class FollowControllerTest {
     @Test
     void shouldBeAbleToGiveBadRequestResponseWhenUserIsNotFollowingAnotherUser() throws Exception {
         when(followService.unfollow(ironman.getId(), thor.getId())).thenThrow(new UserNotFollowingException("User not following"));
-        String requestJson = new ObjectMapper().writeValueAsString(followRequestBodyContainsThor);
+        String requestJson = new ObjectMapper().writeValueAsString(followAndUnfollowRequestBodyContainsThor);
 
         ResultActions result = mockMvc.perform(post("/users/{userId}/unfollow", ironman.getId())
                 .contentType(MediaType.APPLICATION_JSON)

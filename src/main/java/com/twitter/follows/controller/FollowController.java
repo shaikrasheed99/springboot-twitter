@@ -34,8 +34,8 @@ public class FollowController {
     private FollowsResponseBody followsResponseBody;
 
     @PostMapping("/{userId}/follow")
-    public ResponseEntity<?> follow(@PathVariable int userId, @RequestBody FollowRequestBody followRequestBody) throws JsonProcessingException {
-        Follow follow = followService.follow(userId, followRequestBody.getFollowsId());
+    public ResponseEntity<?> follow(@PathVariable int userId, @RequestBody FollowAndUnfollowRequestBody followAndUnfollowRequestBody) throws JsonProcessingException {
+        Follow follow = followService.follow(userId, followAndUnfollowRequestBody.getFollowsId());
         followResponseBody.setFollowerId(follow.getFollowsCompositePrimaryKey().getFollower().getId());
         followResponseBody.setFollowsId(follow.getFollowsCompositePrimaryKey().getFollows().getId());
         successResponse.setData(followResponseBody);
@@ -64,9 +64,9 @@ public class FollowController {
     }
 
     @PostMapping("/{userId}/unfollow")
-    public ResponseEntity<?> unfollow(@PathVariable int userId, @RequestBody FollowRequestBody followRequestBody) throws JsonProcessingException {
-        Follow unfollow = followService.unfollow(userId, followRequestBody.getFollowsId());
-        String message = "User Id " + userId + " unfollowed User Id " + followRequestBody.getFollowsId() + "!";
+    public ResponseEntity<?> unfollow(@PathVariable int userId, @RequestBody FollowAndUnfollowRequestBody followAndUnfollowRequestBody) throws JsonProcessingException {
+        Follow unfollow = followService.unfollow(userId, followAndUnfollowRequestBody.getFollowsId());
+        String message = "User Id " + userId + " unfollowed User Id " + followAndUnfollowRequestBody.getFollowsId() + "!";
         successResponse.setData(Collections.singletonMap("message", message));
         String responseJson = successResponse.convertToJson();
         return ResponseEntity.status(HttpStatus.OK).body(responseJson);

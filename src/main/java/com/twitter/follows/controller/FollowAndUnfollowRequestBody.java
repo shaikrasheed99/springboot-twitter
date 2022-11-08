@@ -3,13 +3,13 @@ package com.twitter.follows.controller;
 import org.springframework.stereotype.Component;
 
 @Component
-public class FollowRequestBody {
+public class FollowAndUnfollowRequestBody {
     private int followsId;
 
-    public FollowRequestBody() {
+    public FollowAndUnfollowRequestBody() {
     }
 
-    public FollowRequestBody(int followsId) {
+    public FollowAndUnfollowRequestBody(int followsId) {
         this.followsId = followsId;
     }
 
