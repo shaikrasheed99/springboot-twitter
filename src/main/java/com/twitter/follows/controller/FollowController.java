@@ -4,10 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.twitter.follows.model.Follow;
 import com.twitter.follows.service.FollowService;
 import com.twitter.helpers.SuccessResponse;
+import com.twitter.users.model.IUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -24,13 +27,25 @@ public class FollowController {
 
     @Autowired
     private FollowResponseBody followResponseBody;
+    @Autowired
+    private FollowersResponseBody followersResponseBody;
 
-    @PostMapping("/{followerId}/follow")
-    public ResponseEntity<?> follow(@PathVariable int followerId, @RequestBody FollowRequestBody followRequestBody) throws JsonProcessingException {
-        Follow follow = followService.follow(followerId, followRequestBody.getFollowsId());
+    @PostMapping("/{userId}/follow")
+    public ResponseEntity<?> follow(@PathVariable int userId, @RequestBody FollowRequestBody followRequestBody) throws JsonProcessingException {
+        Follow follow = followService.follow(userId, followRequestBody.getFollowsId());
         followResponseBody.setFollowerId(follow.getFollowsCompositePrimaryKey().getFollower().getId());
         followResponseBody.setFollowsId(follow.getFollowsCompositePrimaryKey().getFollows().getId());
         successResponse.setData(followResponseBody);
+        String responseJson = successResponse.convertToJson();
+        return ResponseEntity.status(HttpStatus.OK).body(responseJson);
+    }
+
+    @GetMapping("/{userId}/followers")
+    private ResponseEntity<?> followers(@PathVariable int userId) throws JsonProcessingException {
+        List<IUser> followers = followService.followers(userId);
+        followersResponseBody.setCount(followers.size());
+        followersResponseBody.setFollowers(followers);
+        successResponse.setData(followersResponseBody);
         String responseJson = successResponse.convertToJson();
         return ResponseEntity.status(HttpStatus.OK).body(responseJson);
     }
