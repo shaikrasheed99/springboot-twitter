@@ -28,7 +28,8 @@ public class FollowService {
     }
 
     public Follow follow(int followerId, int followsId) {
-        if (followerId == followsId) throw new UserIdsAreSame("User id " + followerId + " cannot follow itself!");
+        if (areUserIdsEqual(followerId, followsId))
+            throw new UserIdsAreSame("User id " + followerId + " cannot follow itself!");
 
         User follower = getUserWith(followerId, "follower Id");
         User follows = getUserWith(followsId, "follows Id");
@@ -52,6 +53,9 @@ public class FollowService {
     }
 
     public Follow unfollow(int followerId, int followsId) {
+        if (areUserIdsEqual(followerId, followsId))
+            throw new UserIdsAreSame("User id " + followerId + " cannot unfollow itself!");
+
         User follower = getUserWith(followerId, "follower Id");
         User follows = getUserWith(followsId, "follows Id");
 
@@ -77,5 +81,9 @@ public class FollowService {
             throw new UserNotFoundException("User is not found with that " + customMessage + ": " + id);
         }
         return user;
+    }
+
+    private static boolean areUserIdsEqual(int followerId, int followsId) {
+        return followerId == followsId;
     }
 }

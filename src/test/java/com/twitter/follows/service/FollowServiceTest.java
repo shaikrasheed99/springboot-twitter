@@ -69,7 +69,7 @@ public class FollowServiceTest {
     }
 
     @Test
-    void shouldBeAbleToThrowExceptionWhenFollowerIdAndFollowsIdAreSame() {
+    void shouldBeAbleToThrowExceptionWhenFollowerIdAndFollowsIdAreSameToFollow() {
         assertThrows(UserIdsAreSame.class, () -> followService.follow(ironman.getId(), ironman.getId()));
     }
 
@@ -152,6 +152,11 @@ public class FollowServiceTest {
         verify(followRepository, times(1)).delete(any(Follow.class));
         verify(userService, times(1)).getById(ironman.getId());
         verify(userService, times(1)).getById(thor.getId());
+    }
+
+    @Test
+    void shouldBeAbleToThrowExceptionWhenFollowerIdAndFollowsIdAreSameToUnfollow() {
+        assertThrows(UserIdsAreSame.class, () -> followService.unfollow(ironman.getId(), ironman.getId()));
     }
 
     @Test
