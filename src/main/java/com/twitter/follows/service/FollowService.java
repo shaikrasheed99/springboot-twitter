@@ -5,6 +5,7 @@ import com.twitter.follows.exceptions.UserNotFollowingException;
 import com.twitter.follows.model.Follow;
 import com.twitter.follows.model.FollowRepository;
 import com.twitter.follows.model.FollowsCompositePrimaryKey;
+import com.twitter.users.exceptions.UserNotFoundException;
 import com.twitter.users.model.IUser;
 import com.twitter.users.model.User;
 import com.twitter.users.service.UserService;
@@ -26,11 +27,14 @@ public class FollowService {
     }
 
     public Follow follow(int followerId, int followsId) {
-        User follower = userService.getById(followerId);
-        User follows = userService.getById(followsId);
+        User follower = getUserWith(followerId, "follower Id");
+        User follows = getUserWith(followsId, "follows Id");
+
         FollowsCompositePrimaryKey primaryKey = new FollowsCompositePrimaryKey(follower, follows);
+
         if (isFollowing(primaryKey)) throw new UserAlreadyFollowingException("User is already following!");
         Follow follow = new Follow(primaryKey);
+
         return followRepository.save(follow);
     }
 
@@ -45,11 +49,14 @@ public class FollowService {
     }
 
     public Follow unfollow(int followerId, int followsId) {
-        User follower = userService.getById(followerId);
-        User follows = userService.getById(followsId);
+        User follower = getUserWith(followerId, "follower Id");
+        User follows = getUserWith(followsId, "follows Id");
+
         FollowsCompositePrimaryKey primaryKey = new FollowsCompositePrimaryKey(follower, follows);
+
         if (!isFollowing(primaryKey)) throw new UserNotFollowingException("User is not following!");
         Follow follow = new Follow(primaryKey);
+
         followRepository.delete(follow);
         return follow;
     }
@@ -57,5 +64,15 @@ public class FollowService {
     private boolean isFollowing(FollowsCompositePrimaryKey primaryKey) {
         Optional<Follow> follow = followRepository.findById(primaryKey);
         return follow.isPresent();
+    }
+
+    private User getUserWith(int id, String customMessage) {
+        User user;
+        try {
+            user = userService.getById(id);
+        } catch (Exception exception) {
+            throw new UserNotFoundException("User is not found with that " + customMessage + ": " + id);
+        }
+        return user;
     }
 }
