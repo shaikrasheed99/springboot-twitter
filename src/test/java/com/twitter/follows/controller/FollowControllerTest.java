@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -36,112 +37,115 @@ public class FollowControllerTest {
 
     @MockBean
     private FollowService followService;
-    private User follower;
-    private User follows;
-    private Follow follow;
-    private FollowRequestBody followRequestBody;
+    private User ironman;
+    private User thor;
+    private User thanos;
+    private List<IUser> users;
+    private FollowRequestBody followRequestBodyContainsThor;
+    private Follow ironmanFollowsThor;
 
     @BeforeEach
     void setUp() {
-        follower = new User(1, "Ironman");
-        follows = new User(2, "Thor");
-        FollowsCompositePrimaryKey primaryKey = new FollowsCompositePrimaryKey(follower, follows);
-        follow = new Follow(primaryKey);
-        followRequestBody = new FollowRequestBody(follows.getId());
+        ironman = new User(1, "Ironman");
+        thor = new User(2, "Thor");
+        thanos = new User(3, "Thanos");
+        users = new ArrayList<>();
+        users.add(ironman);
+        users.add(thor);
+        users.add(thanos);
+        FollowsCompositePrimaryKey ironmanThorKey = new FollowsCompositePrimaryKey(ironman, thor);
+        ironmanFollowsThor = new Follow(ironmanThorKey);
+        followRequestBodyContainsThor = new FollowRequestBody(thor.getId());
     }
 
     @Test
     void shouldBeAbleToFollowAUser() throws Exception {
-        when(followService.follow(follower.getId(), follows.getId())).thenReturn(follow);
-        String requestJson = new ObjectMapper().writeValueAsString(followRequestBody);
+        when(followService.follow(ironman.getId(), thor.getId())).thenReturn(ironmanFollowsThor);
+        String requestJson = new ObjectMapper().writeValueAsString(followRequestBodyContainsThor);
 
-        ResultActions result = mockMvc.perform(post("/users/{userId}/follow", follower.getId()).contentType(MediaType.APPLICATION_JSON).content(requestJson));
+        ResultActions result = mockMvc.perform(post("/users/{userId}/follow", ironman.getId()).contentType(MediaType.APPLICATION_JSON).content(requestJson));
 
-        result.andExpect(status().isOk()).andExpect(jsonPath("$.data.followerId").value(follower.getId())).andExpect(jsonPath("$.data.followsId").value(follows.getId())).andDo(print());
+        result.andExpect(status().isOk()).andExpect(jsonPath("$.data.followerId").value(ironman.getId())).andExpect(jsonPath("$.data.followsId").value(thor.getId())).andDo(print());
 
-        verify(followService, times(1)).follow(follower.getId(), follows.getId());
+        verify(followService, times(1)).follow(ironman.getId(), thor.getId());
     }
 
     @Test
     void shouldBeAbleToGiveBadRequestResponseWhenUserIsAlreadyFollowingAnotherUser() throws Exception {
-        when(followService.follow(follower.getId(), follows.getId())).thenThrow(new UserAlreadyFollowingException("User already following!"));
-        String requestJson = new ObjectMapper().writeValueAsString(followRequestBody);
+        when(followService.follow(ironman.getId(), thor.getId())).thenThrow(new UserAlreadyFollowingException("User already following!"));
+        String requestJson = new ObjectMapper().writeValueAsString(followRequestBodyContainsThor);
 
-        ResultActions result = mockMvc.perform(post("/users/{userId}/follow", follower.getId()).contentType(MediaType.APPLICATION_JSON).content(requestJson));
+        ResultActions result = mockMvc.perform(post("/users/{userId}/follow", ironman.getId()).contentType(MediaType.APPLICATION_JSON).content(requestJson));
 
         result.andExpect(status().isBadRequest()).andExpect(jsonPath("$.error.message").value("User already following!")).andDo(print());
 
-        verify(followService, times(1)).follow(follower.getId(), follows.getId());
+        verify(followService, times(1)).follow(ironman.getId(), thor.getId());
     }
 
     @Test
     void shouldBeAbleToReturnFollowersOfAUser() throws Exception {
-        ArrayList<IUser> followers = new ArrayList<>();
-        followers.add(follows);
-        when(followService.followers(follower.getId())).thenReturn(followers);
+        when(followService.followers(ironman.getId())).thenReturn(users);
 
-        ResultActions result = mockMvc.perform(get("/users/{userId}/followers", follower.getId()));
+        ResultActions result = mockMvc.perform(get("/users/{userId}/followers", ironman.getId()));
 
-        result.andExpect(status().isOk()).andExpect(jsonPath("$.data.count").value(followers.size())).andExpect(jsonPath("$.data.followers[0].name").value(followers.get(0).getName())).andDo(print());
+        result.andExpect(status().isOk()).andExpect(jsonPath("$.data.count").value(users.size())).andExpect(jsonPath("$.data.followers[0].name").value(users.get(0).getName())).andDo(print());
 
-        verify(followService, times(1)).followers(follower.getId());
+        verify(followService, times(1)).followers(ironman.getId());
     }
 
     @Test
     void shouldBeAbleToGiveNotFoundErrorResponseWhenFollowerUserIdDoesNotExists() throws Exception {
-        when(followService.followers(follower.getId())).thenThrow(new UserNotFoundException("User not found!"));
+        when(followService.followers(ironman.getId())).thenThrow(new UserNotFoundException("User not found!"));
 
-        ResultActions result = mockMvc.perform(get("/users/{userId}/followers", follower.getId()));
+        ResultActions result = mockMvc.perform(get("/users/{userId}/followers", ironman.getId()));
 
         result.andExpect(status().isNotFound()).andExpect(jsonPath("$.error.message").value("User not found!")).andDo(print());
 
-        verify(followService, times(1)).followers(follower.getId());
+        verify(followService, times(1)).followers(ironman.getId());
     }
 
     @Test
     void shouldBeAbleToReturnFollowsOfAUser() throws Exception {
-        ArrayList<IUser> followings = new ArrayList<>();
-        followings.add(follower);
-        when(followService.follows(follows.getId())).thenReturn(followings);
+        when(followService.follows(thor.getId())).thenReturn(users);
 
-        ResultActions result = mockMvc.perform(get("/users/{userId}/follows", follows.getId()));
+        ResultActions result = mockMvc.perform(get("/users/{userId}/follows", thor.getId()));
 
-        result.andExpect(status().isOk()).andExpect(jsonPath("$.data.count").value(followings.size())).andExpect(jsonPath("$.data.follows[0].name").value(followings.get(0).getName())).andDo(print());
+        result.andExpect(status().isOk()).andExpect(jsonPath("$.data.count").value(users.size())).andExpect(jsonPath("$.data.follows[0].name").value(users.get(0).getName())).andDo(print());
 
-        verify(followService, times(1)).follows(follows.getId());
+        verify(followService, times(1)).follows(thor.getId());
     }
 
     @Test
     void shouldBeAbleToGiveNotFoundErrorResponseWhenFollowsUserIdDoesNotExists() throws Exception {
-        when(followService.follows(follows.getId())).thenThrow(new UserNotFoundException("User not found!"));
+        when(followService.follows(thor.getId())).thenThrow(new UserNotFoundException("User not found!"));
 
-        ResultActions result = mockMvc.perform(get("/users/{userId}/follows", follows.getId()));
+        ResultActions result = mockMvc.perform(get("/users/{userId}/follows", thor.getId()));
 
         result.andExpect(status().isNotFound()).andExpect(jsonPath("$.error.message").value("User not found!")).andDo(print());
 
-        verify(followService, times(1)).follows(follows.getId());
+        verify(followService, times(1)).follows(thor.getId());
     }
 
     @Test
     void shouldBeAbleToUnfollowAUser() throws Exception {
-        String requestJson = new ObjectMapper().writeValueAsString(followRequestBody);
+        String requestJson = new ObjectMapper().writeValueAsString(followRequestBodyContainsThor);
 
-        ResultActions result = mockMvc.perform(post("/users/{userId}/unfollow", follower.getId()).contentType(MediaType.APPLICATION_JSON).content(requestJson));
+        ResultActions result = mockMvc.perform(post("/users/{userId}/unfollow", ironman.getId()).contentType(MediaType.APPLICATION_JSON).content(requestJson));
 
         result.andExpect(status().isOk()).andExpect(jsonPath("$.data.message").value("User Id 1 unfollowed User Id 2!")).andDo(print());
 
-        verify(followService, times(1)).unfollow(follower.getId(), follows.getId());
+        verify(followService, times(1)).unfollow(ironman.getId(), thor.getId());
     }
 
     @Test
     void shouldBeAbleToGiveBadRequestResponseWhenUserIsNotFollowingAnotherUser() throws Exception {
-        when(followService.unfollow(follower.getId(), follows.getId())).thenThrow(new UserNotFollowingException("User not following"));
-        String requestJson = new ObjectMapper().writeValueAsString(followRequestBody);
+        when(followService.unfollow(ironman.getId(), thor.getId())).thenThrow(new UserNotFollowingException("User not following"));
+        String requestJson = new ObjectMapper().writeValueAsString(followRequestBodyContainsThor);
 
-        ResultActions result = mockMvc.perform(post("/users/{userId}/unfollow", follower.getId()).contentType(MediaType.APPLICATION_JSON).content(requestJson));
+        ResultActions result = mockMvc.perform(post("/users/{userId}/unfollow", ironman.getId()).contentType(MediaType.APPLICATION_JSON).content(requestJson));
 
         result.andExpect(status().isBadRequest()).andExpect(jsonPath("$.error.message").value("User not following")).andDo(print());
 
-        verify(followService, times(1)).unfollow(follower.getId(), follows.getId());
+        verify(followService, times(1)).unfollow(ironman.getId(), thor.getId());
     }
 }

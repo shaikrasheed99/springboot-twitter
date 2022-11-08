@@ -12,9 +12,9 @@ fileignoreconfig:
 - filename: src/main/java/com/twitter/follows/service/FollowService.java
   checksum: d46fe42e7a79903e68a1c935ba58274b297e2b66bb824d12c5122ae3411e6c07
 - filename: src/test/java/com/twitter/follows/service/FollowServiceTest.java
-  checksum: bbe592403031155749e766722ef2d0698b6230eb23a9492ba0edd47dd2563547
+  checksum: 0ec32462ae1f818d81334f7673b7de1df916a31f4eb6508bbface46d2cf6dfe6
 - filename: src/test/java/com/twitter/follows/controller/FollowControllerTest.java
-  checksum: e3beaf263e82868dfc7ef0f1cbc8ac708e9abda112432ed12f7a3e666b036faa
+  checksum: f03342402c52769b2fa97e6c67978302e9ef4a18cff5a13b0f673518a23bf4eb
 - filename: src/test/java/com/twitter/follows/model/FollowRepositoryTest.java
   checksum: 7d97c2a15e832859f66c9816dc5280fd1820b30a9ff92488b553d409f242a825
 version: ""

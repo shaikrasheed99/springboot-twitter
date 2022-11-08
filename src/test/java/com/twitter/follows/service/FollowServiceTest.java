@@ -34,130 +34,130 @@ public class FollowServiceTest {
 
     @InjectMocks
     private FollowService followService;
-    private User follower;
-    private User follows;
-    private Follow follow;
-    private FollowsCompositePrimaryKey primaryKey;
+    private User ironman;
+    private User thor;
+    private List<IUser> users;
+    private FollowsCompositePrimaryKey ironmanThorKey;
+    private Follow ironmanFollowsThor;
 
     @BeforeEach
     void setUp() {
-        follower = new User(1, "ironman");
-        follows = new User(2, "Thor");
-        primaryKey = new FollowsCompositePrimaryKey(follower, follows);
-        follow = new Follow(primaryKey);
+        ironman = new User(1, "ironman");
+        thor = new User(2, "Thor");
+        users = new ArrayList<>();
+        users.add(ironman);
+        users.add(thor);
+        ironmanThorKey = new FollowsCompositePrimaryKey(ironman, thor);
+        ironmanFollowsThor = new Follow(ironmanThorKey);
     }
 
     @Test
     void shouldBeAbleToFollowAUser() {
-        when(userService.getUserById(follower.getId())).thenReturn(follower);
-        when(userService.getUserById(follows.getId())).thenReturn(follows);
-        when(followRepository.save(any(Follow.class))).thenReturn(follow);
+        when(userService.getUserById(ironman.getId())).thenReturn(ironman);
+        when(userService.getUserById(thor.getId())).thenReturn(thor);
+        when(followRepository.save(any(Follow.class))).thenReturn(ironmanFollowsThor);
 
-        Follow savedFollow = followService.follow(follower.getId(), follows.getId());
+        Follow savedFollow = followService.follow(ironman.getId(), thor.getId());
 
-        assertEquals(savedFollow.getFollowsCompositePrimaryKey().getFollower(), follow.getFollowsCompositePrimaryKey().getFollower());
-        assertEquals(savedFollow.getFollowsCompositePrimaryKey().getFollows(), follow.getFollowsCompositePrimaryKey().getFollows());
+        assertEquals(savedFollow.getFollowsCompositePrimaryKey().getFollower(), ironmanFollowsThor.getFollowsCompositePrimaryKey().getFollower());
+        assertEquals(savedFollow.getFollowsCompositePrimaryKey().getFollows(), ironmanFollowsThor.getFollowsCompositePrimaryKey().getFollows());
 
-        verify(userService, times(1)).getUserById(follower.getId());
-        verify(userService, times(1)).getUserById(follows.getId());
+        verify(userService, times(1)).getUserById(ironman.getId());
+        verify(userService, times(1)).getUserById(thor.getId());
         verify(followRepository, times(1)).save(any(Follow.class));
     }
 
     @Test
     void shouldBeAbleToThrowExceptionWhenAUserIsAlreadyFollowingAnotherUser() {
-        when(followRepository.findById(any(FollowsCompositePrimaryKey.class))).thenReturn(Optional.ofNullable(follow));
+        when(followRepository.findById(any(FollowsCompositePrimaryKey.class))).thenReturn(Optional.ofNullable(ironmanFollowsThor));
 
-        assertThrows(UserAlreadyFollowingException.class, () -> followService.follow(follower.getId(), follows.getId()));
+        assertThrows(UserAlreadyFollowingException.class, () -> followService.follow(ironman.getId(), thor.getId()));
 
         verify(followRepository, times(1)).findById(any(FollowsCompositePrimaryKey.class));
     }
 
     @Test
     void shouldBeAbleToThrowExceptionWhenFollowerIdDoesNotExists() {
-        when(userService.getUserById(follower.getId())).thenThrow(UserNotFoundException.class);
+        when(userService.getUserById(ironman.getId())).thenThrow(UserNotFoundException.class);
 
-        assertThrows(UserNotFoundException.class, () -> followService.follow(follower.getId(), follows.getId()));
+        assertThrows(UserNotFoundException.class, () -> followService.follow(ironman.getId(), thor.getId()));
 
-        verify(userService, times(1)).getUserById(follower.getId());
+        verify(userService, times(1)).getUserById(ironman.getId());
     }
 
     @Test
     void shouldBeAbleToThrowExceptionWhenFollowsIdDoesNotExists() {
-        when(userService.getUserById(follower.getId())).thenReturn(follower);
-        when(userService.getUserById(follows.getId())).thenThrow(UserNotFoundException.class);
+        when(userService.getUserById(ironman.getId())).thenReturn(ironman);
+        when(userService.getUserById(thor.getId())).thenThrow(UserNotFoundException.class);
 
-        assertThrows(UserNotFoundException.class, () -> followService.follow(follower.getId(), follows.getId()));
+        assertThrows(UserNotFoundException.class, () -> followService.follow(ironman.getId(), thor.getId()));
 
-        verify(userService, times(1)).getUserById(follower.getId());
-        verify(userService, times(1)).getUserById(follows.getId());
+        verify(userService, times(1)).getUserById(ironman.getId());
+        verify(userService, times(1)).getUserById(thor.getId());
     }
 
     @Test
     void shouldBeAbleToReturnFollowersOfAUser() {
-        ArrayList<IUser> followers = new ArrayList<>();
-        followers.add(follows);
-        when(followRepository.findFollowers(follower.getId())).thenReturn(followers);
+        when(followRepository.findFollowers(ironman.getId())).thenReturn(users);
 
-        List<IUser> listOfFollowers = followService.followers(follower.getId());
+        List<IUser> listOfFollowers = followService.followers(ironman.getId());
 
-        assertEquals(1, listOfFollowers.size());
+        assertEquals(2, listOfFollowers.size());
 
-        verify(followRepository, times(1)).findFollowers(follower.getId());
+        verify(followRepository, times(1)).findFollowers(ironman.getId());
     }
 
     @Test
     void shouldBeAbleToThrowExceptionWhenFollowerIdIsNotPresentInUsersTable() {
-        when(userService.getUserById(follower.getId())).thenThrow(UserNotFoundException.class);
+        when(userService.getUserById(ironman.getId())).thenThrow(UserNotFoundException.class);
 
-        assertThrows(UserNotFoundException.class, () -> followService.followers(follower.getId()));
+        assertThrows(UserNotFoundException.class, () -> followService.followers(ironman.getId()));
     }
 
     @Test
     void shouldBeAbleToReturnFollowsOfAUser() {
-        ArrayList<IUser> followings = new ArrayList<>();
-        followings.add(follower);
-        when(followRepository.findFollows(follows.getId())).thenReturn(followings);
+        when(followRepository.findFollows(thor.getId())).thenReturn(users);
 
-        List<IUser> listOfFollows = followService.follows(follows.getId());
+        List<IUser> listOfFollows = followService.follows(thor.getId());
 
-        assertEquals(1, listOfFollows.size());
+        assertEquals(2, listOfFollows.size());
 
-        verify(followRepository, times(1)).findFollows(follows.getId());
+        verify(followRepository, times(1)).findFollows(thor.getId());
     }
 
     @Test
     void shouldBeAbleToThrowExceptionWhenFollowsIdIsNotPresentInUsersTable() {
-        when(userService.getUserById(follows.getId())).thenThrow(UserNotFoundException.class);
+        when(userService.getUserById(thor.getId())).thenThrow(UserNotFoundException.class);
 
-        assertThrows(UserNotFoundException.class, () -> followService.follows(follows.getId()));
+        assertThrows(UserNotFoundException.class, () -> followService.follows(thor.getId()));
     }
 
     @Test
     void shouldBeAbleToUnfollowAUser() {
-        when(userService.getUserById(follower.getId())).thenReturn(follower);
-        when(userService.getUserById(follows.getId())).thenReturn(follows);
-        when(followRepository.findById(any(FollowsCompositePrimaryKey.class))).thenReturn(Optional.ofNullable(follow));
+        when(userService.getUserById(ironman.getId())).thenReturn(ironman);
+        when(userService.getUserById(thor.getId())).thenReturn(thor);
+        when(followRepository.findById(any(FollowsCompositePrimaryKey.class))).thenReturn(Optional.ofNullable(ironmanFollowsThor));
 
-        Follow unfollow = followService.unfollow(follower.getId(), follows.getId());
+        Follow unfollow = followService.unfollow(ironman.getId(), thor.getId());
 
-        assertEquals(unfollow.getFollowsCompositePrimaryKey().getFollower(), follower);
-        assertEquals(unfollow.getFollowsCompositePrimaryKey().getFollows(), follows);
+        assertEquals(unfollow.getFollowsCompositePrimaryKey().getFollower(), ironman);
+        assertEquals(unfollow.getFollowsCompositePrimaryKey().getFollows(), thor);
 
         verify(followRepository, times(1)).delete(any(Follow.class));
-        verify(userService, times(1)).getUserById(follower.getId());
-        verify(userService, times(1)).getUserById(follows.getId());
+        verify(userService, times(1)).getUserById(ironman.getId());
+        verify(userService, times(1)).getUserById(thor.getId());
     }
 
     @Test
     void shouldBeAbleToThrowExceptionWhenUserIsNotFollowingAnotherUser() {
-        when(userService.getUserById(follower.getId())).thenReturn(follower);
-        when(userService.getUserById(follows.getId())).thenReturn(follows);
+        when(userService.getUserById(ironman.getId())).thenReturn(ironman);
+        when(userService.getUserById(thor.getId())).thenReturn(thor);
         when(followRepository.findById(any(FollowsCompositePrimaryKey.class))).thenReturn(Optional.empty());
 
-        assertThrows(UserNotFollowingException.class, () -> followService.unfollow(follower.getId(), follows.getId()));
+        assertThrows(UserNotFollowingException.class, () -> followService.unfollow(ironman.getId(), thor.getId()));
 
         verify(followRepository, times(1)).findById(any(FollowsCompositePrimaryKey.class));
-        verify(userService, times(1)).getUserById(follower.getId());
-        verify(userService, times(1)).getUserById(follows.getId());
+        verify(userService, times(1)).getUserById(ironman.getId());
+        verify(userService, times(1)).getUserById(thor.getId());
     }
 }
