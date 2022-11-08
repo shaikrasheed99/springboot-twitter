@@ -18,7 +18,7 @@ public class FollowExceptionHandler {
     @ExceptionHandler(value = {
             UserAlreadyFollowingException.class,
             UserNotFollowingException.class,
-            UserIdsAreSame.class
+            UserIdsAreSameException.class
     })
     public ResponseEntity<?> handleMultipleExceptions(Exception exception) throws JsonProcessingException {
         errorResponse.setError(Collections.singletonMap("message", exception.getMessage()));

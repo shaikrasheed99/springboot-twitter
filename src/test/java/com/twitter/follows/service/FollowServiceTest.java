@@ -1,7 +1,7 @@
 package com.twitter.follows.service;
 
 import com.twitter.follows.exceptions.UserAlreadyFollowingException;
-import com.twitter.follows.exceptions.UserIdsAreSame;
+import com.twitter.follows.exceptions.UserIdsAreSameException;
 import com.twitter.follows.exceptions.UserNotFollowingException;
 import com.twitter.follows.model.Follow;
 import com.twitter.follows.model.FollowRepository;
@@ -70,7 +70,7 @@ public class FollowServiceTest {
 
     @Test
     void shouldBeAbleToThrowExceptionWhenFollowerIdAndFollowsIdAreSameToFollow() {
-        assertThrows(UserIdsAreSame.class, () -> followService.follow(ironman.getId(), ironman.getId()));
+        assertThrows(UserIdsAreSameException.class, () -> followService.follow(ironman.getId(), ironman.getId()));
     }
 
     @Test
@@ -156,7 +156,7 @@ public class FollowServiceTest {
 
     @Test
     void shouldBeAbleToThrowExceptionWhenFollowerIdAndFollowsIdAreSameToUnfollow() {
-        assertThrows(UserIdsAreSame.class, () -> followService.unfollow(ironman.getId(), ironman.getId()));
+        assertThrows(UserIdsAreSameException.class, () -> followService.unfollow(ironman.getId(), ironman.getId()));
     }
 
     @Test

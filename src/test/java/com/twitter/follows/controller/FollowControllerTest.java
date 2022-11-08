@@ -2,7 +2,7 @@ package com.twitter.follows.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.twitter.follows.exceptions.UserAlreadyFollowingException;
-import com.twitter.follows.exceptions.UserIdsAreSame;
+import com.twitter.follows.exceptions.UserIdsAreSameException;
 import com.twitter.follows.exceptions.UserNotFollowingException;
 import com.twitter.follows.model.Follow;
 import com.twitter.follows.model.FollowsCompositePrimaryKey;
@@ -78,7 +78,7 @@ public class FollowControllerTest {
 
     @Test
     void shouldBeAbleToGiveBadRequestResponseWhenBothFollowerIdAndFollowsIdAreSameToFollow() throws Exception {
-        when(followService.follow(thor.getId(), thor.getId())).thenThrow(new UserIdsAreSame("Both ids are same!"));
+        when(followService.follow(thor.getId(), thor.getId())).thenThrow(new UserIdsAreSameException("Both ids are same!"));
         String requestJson = new ObjectMapper().writeValueAsString(followRequestBodyContainsThor);
 
         ResultActions result = mockMvc.perform(post("/users/{userId}/follow", thor.getId())
@@ -181,7 +181,7 @@ public class FollowControllerTest {
 
     @Test
     void shouldBeAbleToGiveBadRequestResponseWhenBothFollowerIdAndFollowsIdAreSameToUnFollow() throws Exception {
-        when(followService.unfollow(thor.getId(), thor.getId())).thenThrow(new UserIdsAreSame("Both ids are same!"));
+        when(followService.unfollow(thor.getId(), thor.getId())).thenThrow(new UserIdsAreSameException("Both ids are same!"));
         String requestJson = new ObjectMapper().writeValueAsString(followRequestBodyContainsThor);
 
         ResultActions result = mockMvc.perform(post("/users/{userId}/unfollow", thor.getId())

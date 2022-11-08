@@ -1,7 +1,7 @@
 package com.twitter.follows.service;
 
 import com.twitter.follows.exceptions.UserAlreadyFollowingException;
-import com.twitter.follows.exceptions.UserIdsAreSame;
+import com.twitter.follows.exceptions.UserIdsAreSameException;
 import com.twitter.follows.exceptions.UserNotFollowingException;
 import com.twitter.follows.model.Follow;
 import com.twitter.follows.model.FollowRepository;
@@ -29,7 +29,7 @@ public class FollowService {
 
     public Follow follow(int followerId, int followsId) {
         if (areUserIdsEqual(followerId, followsId))
-            throw new UserIdsAreSame("User id " + followerId + " cannot follow itself!");
+            throw new UserIdsAreSameException("User id " + followerId + " cannot follow itself!");
 
         User follower = getUserWith(followerId, "follower Id");
         User follows = getUserWith(followsId, "follows Id");
@@ -54,7 +54,7 @@ public class FollowService {
 
     public Follow unfollow(int followerId, int followsId) {
         if (areUserIdsEqual(followerId, followsId))
-            throw new UserIdsAreSame("User id " + followerId + " cannot unfollow itself!");
+            throw new UserIdsAreSameException("User id " + followerId + " cannot unfollow itself!");
 
         User follower = getUserWith(followerId, "follower Id");
         User follows = getUserWith(followsId, "follows Id");
