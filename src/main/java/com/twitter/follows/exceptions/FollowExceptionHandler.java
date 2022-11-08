@@ -28,4 +28,11 @@ public class FollowExceptionHandler {
         String responseJson = errorResponse.convertToJson();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseJson);
     }
+
+    @ExceptionHandler(value = {UserIdsAreSame.class})
+    public ResponseEntity<?> handleUserIdsAreSame(Exception exception) throws JsonProcessingException {
+        errorResponse.setError(Collections.singletonMap("message", exception.getMessage()));
+        String responseJson = errorResponse.convertToJson();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseJson);
+    }
 }

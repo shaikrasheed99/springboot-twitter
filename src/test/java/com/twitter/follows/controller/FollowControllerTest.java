@@ -2,6 +2,7 @@ package com.twitter.follows.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.twitter.follows.exceptions.UserAlreadyFollowingException;
+import com.twitter.follows.exceptions.UserIdsAreSame;
 import com.twitter.follows.exceptions.UserNotFollowingException;
 import com.twitter.follows.model.Follow;
 import com.twitter.follows.model.FollowsCompositePrimaryKey;
@@ -73,6 +74,22 @@ public class FollowControllerTest {
                 .andDo(print());
 
         verify(followService, times(1)).follow(ironman.getId(), thor.getId());
+    }
+
+    @Test
+    void shouldBeAbleToGiveBadRequestResponseWhenBothFollowerIdAndFollowsIdAreSameToFollow() throws Exception {
+        when(followService.follow(thor.getId(), thor.getId())).thenThrow(new UserIdsAreSame("Both ids are same!"));
+        String requestJson = new ObjectMapper().writeValueAsString(followRequestBodyContainsThor);
+
+        ResultActions result = mockMvc.perform(post("/users/{userId}/follow", thor.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson));
+
+        result.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.message").value("Both ids are same!"))
+                .andDo(print());
+
+        verify(followService, times(1)).follow(thor.getId(), thor.getId());
     }
 
     @Test
@@ -160,6 +177,22 @@ public class FollowControllerTest {
                 .andDo(print());
 
         verify(followService, times(1)).unfollow(ironman.getId(), thor.getId());
+    }
+
+    @Test
+    void shouldBeAbleToGiveBadRequestResponseWhenBothFollowerIdAndFollowsIdAreSameToUnFollow() throws Exception {
+        when(followService.unfollow(thor.getId(), thor.getId())).thenThrow(new UserIdsAreSame("Both ids are same!"));
+        String requestJson = new ObjectMapper().writeValueAsString(followRequestBodyContainsThor);
+
+        ResultActions result = mockMvc.perform(post("/users/{userId}/unfollow", thor.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson));
+
+        result.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.message").value("Both ids are same!"))
+                .andDo(print());
+
+        verify(followService, times(1)).unfollow(thor.getId(), thor.getId());
     }
 
     @Test
