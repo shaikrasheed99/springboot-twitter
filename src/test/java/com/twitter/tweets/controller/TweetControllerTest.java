@@ -54,9 +54,13 @@ public class TweetControllerTest {
         when(tweetService.create(description, user.getId())).thenReturn(tweet);
         String tweetRequestBodyJson = new ObjectMapper().writeValueAsString(tweetRequestBody);
 
-        ResultActions result = mockMvc.perform(post("/users/{id}/tweets", user.getId()).contentType(MediaType.APPLICATION_JSON).content(tweetRequestBodyJson));
+        ResultActions result = mockMvc.perform(post("/users/{id}/tweets", user.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(tweetRequestBodyJson));
 
-        result.andExpect(status().isCreated()).andExpect(jsonPath("$.data.tweet_id").value(tweet.getId())).andDo(print());
+        result.andExpect(status().isCreated())
+                .andExpect(jsonPath("$.data.tweet_id").value(tweet.getId()))
+                .andDo(print());
 
         verify(tweetService, times(1)).create(description, user.getId());
     }
@@ -66,9 +70,13 @@ public class TweetControllerTest {
         when(tweetService.create("", user.getId())).thenThrow(new InvalidTweetRequestBodyException(Collections.singletonList("Description should not be empty!")));
         String tweetRequestBodyJson = new ObjectMapper().writeValueAsString(new TweetRequestBody(""));
 
-        ResultActions result = mockMvc.perform(post("/users/{id}/tweets", user.getId()).contentType(MediaType.APPLICATION_JSON).content(tweetRequestBodyJson));
+        ResultActions result = mockMvc.perform(post("/users/{id}/tweets", user.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(tweetRequestBodyJson));
 
-        result.andExpect(status().isBadRequest()).andExpect(jsonPath("$.error").value("Description should not be empty!")).andDo(print());
+        result.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("Description should not be empty!"))
+                .andDo(print());
 
         verify(tweetService, times(1)).create("", user.getId());
     }
@@ -83,7 +91,9 @@ public class TweetControllerTest {
 
         ResultActions result = mockMvc.perform(get("/users/{id}/tweets", user.getId()));
 
-        result.andExpect(status().isOk()).andExpect(jsonPath("$.data[0].description").value(tweets.get(0).getDescription())).andDo(print());
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.data[0].description").value(tweets.get(0).getDescription()))
+                .andDo(print());
 
         verify(tweetService, times(1)).getByAuthorId(user.getId());
     }
@@ -94,7 +104,9 @@ public class TweetControllerTest {
 
         ResultActions result = mockMvc.perform(get("/users/{id}/tweets", user.getId()));
 
-        result.andExpect(status().isNotFound()).andExpect(jsonPath("$.error.message").value("User not found!")).andDo(print());
+        result.andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error.message").value("User not found!"))
+                .andDo(print());
 
         verify(tweetService, times(1)).getByAuthorId(user.getId());
     }
@@ -105,7 +117,10 @@ public class TweetControllerTest {
 
         ResultActions result = mockMvc.perform(get("/users/{id}/tweets/{tweetId}", user.getId(), tweet.getId()));
 
-        result.andExpect(status().isOk()).andExpect(jsonPath("$.data.id").value(tweet.getId())).andExpect(jsonPath("$.data.description").value(tweet.getDescription())).andDo(print());
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.id").value(tweet.getId()))
+                .andExpect(jsonPath("$.data.description").value(tweet.getDescription()))
+                .andDo(print());
 
         verify(tweetService, times(1)).getByAuthorIdAndTweetId(user.getId(), tweet.getId());
     }
@@ -116,7 +131,9 @@ public class TweetControllerTest {
 
         ResultActions result = mockMvc.perform(get("/users/{id}/tweets/{tweetId}", user.getId(), tweet.getId()));
 
-        result.andExpect(status().isNotFound()).andExpect(jsonPath("$.error.message").value("Tweet not found!")).andDo(print());
+        result.andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error.message").value("Tweet not found!"))
+                .andDo(print());
 
         verify(tweetService, times(1)).getByAuthorIdAndTweetId(user.getId(), tweet.getId());
     }
@@ -127,7 +144,9 @@ public class TweetControllerTest {
 
         ResultActions result = mockMvc.perform(get("/users/{id}/tweets/{tweetId}", user.getId(), tweet.getId()));
 
-        result.andExpect(status().isForbidden()).andExpect(jsonPath("$.error.message").value("Author mismatch!")).andDo(print());
+        result.andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.error.message").value("Author mismatch!"))
+                .andDo(print());
 
         verify(tweetService, times(1)).getByAuthorIdAndTweetId(user.getId(), tweet.getId());
     }

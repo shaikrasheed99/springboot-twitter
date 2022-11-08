@@ -44,9 +44,13 @@ public class UserControllerTest {
         when(userService.create(any(User.class))).thenReturn(user);
         String userJson = new ObjectMapper().writeValueAsString(user);
 
-        ResultActions result = mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON).content(userJson));
+        ResultActions result = mockMvc.perform(post("/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(userJson));
 
-        result.andExpect(status().isCreated()).andExpect(jsonPath("$.data.id").value(0)).andDo(print());
+        result.andExpect(status().isCreated())
+                .andExpect(jsonPath("$.data.id").value(0))
+                .andDo(print());
 
         verify(userService, times(1)).create(any(User.class));
     }
@@ -57,9 +61,13 @@ public class UserControllerTest {
         User user = new User();
         String userJson = new ObjectMapper().writeValueAsString(user);
 
-        ResultActions result = mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON).content(userJson));
+        ResultActions result = mockMvc.perform(post("/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(userJson));
 
-        result.andExpect(status().isBadRequest()).andExpect(jsonPath("$.error.message").value("User name exception")).andDo(print());
+        result.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.message").value("User name exception"))
+                .andDo(print());
 
         verify(userService, times(1)).create(any(User.class));
     }
@@ -69,9 +77,13 @@ public class UserControllerTest {
         when(userService.create(any(User.class))).thenThrow(new UserAlreadyExistException("User already exists"));
         String userJson = new ObjectMapper().writeValueAsString(user);
 
-        ResultActions result = mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON).content(userJson));
+        ResultActions result = mockMvc.perform(post("/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(userJson));
 
-        result.andExpect(status().isBadRequest()).andExpect(jsonPath("$.error.message").value("User already exists")).andDo(print());
+        result.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.message").value("User already exists"))
+                .andDo(print());
 
         verify(userService, times(1)).create(any(User.class));
     }
@@ -83,7 +95,10 @@ public class UserControllerTest {
 
         ResultActions result = mockMvc.perform(get("/users/{userId}", userId));
 
-        result.andExpect(status().isOk()).andExpect(jsonPath("$.data.id").value(userId)).andExpect(jsonPath("$.data.name").value(user.getName())).andDo(print());
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.id").value(userId))
+                .andExpect(jsonPath("$.data.name").value(user.getName()))
+                .andDo(print());
 
         verify(userService, times(1)).getUserById(userId);
     }
@@ -95,7 +110,9 @@ public class UserControllerTest {
 
         ResultActions result = mockMvc.perform(get("/users/{userId}", userId));
 
-        result.andExpect(status().isNotFound()).andExpect(jsonPath("$.error.message").value("User not found!")).andDo(print());
+        result.andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error.message").value("User not found!"))
+                .andDo(print());
 
         verify(userService, times(1)).getUserById(userId);
     }

@@ -63,9 +63,14 @@ public class FollowControllerTest {
         when(followService.follow(ironman.getId(), thor.getId())).thenReturn(ironmanFollowsThor);
         String requestJson = new ObjectMapper().writeValueAsString(followRequestBodyContainsThor);
 
-        ResultActions result = mockMvc.perform(post("/users/{userId}/follow", ironman.getId()).contentType(MediaType.APPLICATION_JSON).content(requestJson));
+        ResultActions result = mockMvc.perform(post("/users/{userId}/follow", ironman.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson));
 
-        result.andExpect(status().isOk()).andExpect(jsonPath("$.data.followerId").value(ironman.getId())).andExpect(jsonPath("$.data.followsId").value(thor.getId())).andDo(print());
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.followerId").value(ironman.getId()))
+                .andExpect(jsonPath("$.data.followsId").value(thor.getId()))
+                .andDo(print());
 
         verify(followService, times(1)).follow(ironman.getId(), thor.getId());
     }
@@ -75,9 +80,13 @@ public class FollowControllerTest {
         when(followService.follow(ironman.getId(), thor.getId())).thenThrow(new UserAlreadyFollowingException("User already following!"));
         String requestJson = new ObjectMapper().writeValueAsString(followRequestBodyContainsThor);
 
-        ResultActions result = mockMvc.perform(post("/users/{userId}/follow", ironman.getId()).contentType(MediaType.APPLICATION_JSON).content(requestJson));
+        ResultActions result = mockMvc.perform(post("/users/{userId}/follow", ironman.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson));
 
-        result.andExpect(status().isBadRequest()).andExpect(jsonPath("$.error.message").value("User already following!")).andDo(print());
+        result.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.message").value("User already following!"))
+                .andDo(print());
 
         verify(followService, times(1)).follow(ironman.getId(), thor.getId());
     }
@@ -88,7 +97,11 @@ public class FollowControllerTest {
 
         ResultActions result = mockMvc.perform(get("/users/{userId}/followers", ironman.getId()));
 
-        result.andExpect(status().isOk()).andExpect(jsonPath("$.data.count").value(users.size())).andExpect(jsonPath("$.data.followers[0].name").value(users.get(0).getName())).andDo(print());
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.count").value(users.size()))
+                .andExpect(jsonPath("$.data.followers[0].id").value(users.get(0).getId()))
+                .andExpect(jsonPath("$.data.followers[1].name").value(users.get(1).getName()))
+                .andDo(print());
 
         verify(followService, times(1)).followers(ironman.getId());
     }
@@ -99,7 +112,9 @@ public class FollowControllerTest {
 
         ResultActions result = mockMvc.perform(get("/users/{userId}/followers", ironman.getId()));
 
-        result.andExpect(status().isNotFound()).andExpect(jsonPath("$.error.message").value("User not found!")).andDo(print());
+        result.andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error.message").value("User not found!"))
+                .andDo(print());
 
         verify(followService, times(1)).followers(ironman.getId());
     }
@@ -110,7 +125,11 @@ public class FollowControllerTest {
 
         ResultActions result = mockMvc.perform(get("/users/{userId}/follows", thor.getId()));
 
-        result.andExpect(status().isOk()).andExpect(jsonPath("$.data.count").value(users.size())).andExpect(jsonPath("$.data.follows[0].name").value(users.get(0).getName())).andDo(print());
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.count").value(users.size()))
+                .andExpect(jsonPath("$.data.follows[0].name").value(users.get(0).getName()))
+                .andExpect(jsonPath("$.data.follows[1].id").value(users.get(1).getId()))
+                .andDo(print());
 
         verify(followService, times(1)).follows(thor.getId());
     }
@@ -121,7 +140,9 @@ public class FollowControllerTest {
 
         ResultActions result = mockMvc.perform(get("/users/{userId}/follows", thor.getId()));
 
-        result.andExpect(status().isNotFound()).andExpect(jsonPath("$.error.message").value("User not found!")).andDo(print());
+        result.andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error.message").value("User not found!"))
+                .andDo(print());
 
         verify(followService, times(1)).follows(thor.getId());
     }
@@ -130,9 +151,13 @@ public class FollowControllerTest {
     void shouldBeAbleToUnfollowAUser() throws Exception {
         String requestJson = new ObjectMapper().writeValueAsString(followRequestBodyContainsThor);
 
-        ResultActions result = mockMvc.perform(post("/users/{userId}/unfollow", ironman.getId()).contentType(MediaType.APPLICATION_JSON).content(requestJson));
+        ResultActions result = mockMvc.perform(post("/users/{userId}/unfollow", ironman.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson));
 
-        result.andExpect(status().isOk()).andExpect(jsonPath("$.data.message").value("User Id 1 unfollowed User Id 2!")).andDo(print());
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.message").value("User Id 1 unfollowed User Id 2!"))
+                .andDo(print());
 
         verify(followService, times(1)).unfollow(ironman.getId(), thor.getId());
     }
@@ -142,9 +167,13 @@ public class FollowControllerTest {
         when(followService.unfollow(ironman.getId(), thor.getId())).thenThrow(new UserNotFollowingException("User not following"));
         String requestJson = new ObjectMapper().writeValueAsString(followRequestBodyContainsThor);
 
-        ResultActions result = mockMvc.perform(post("/users/{userId}/unfollow", ironman.getId()).contentType(MediaType.APPLICATION_JSON).content(requestJson));
+        ResultActions result = mockMvc.perform(post("/users/{userId}/unfollow", ironman.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson));
 
-        result.andExpect(status().isBadRequest()).andExpect(jsonPath("$.error.message").value("User not following")).andDo(print());
+        result.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.message").value("User not following"))
+                .andDo(print());
 
         verify(followService, times(1)).unfollow(ironman.getId(), thor.getId());
     }
