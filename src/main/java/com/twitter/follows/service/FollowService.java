@@ -26,8 +26,8 @@ public class FollowService {
     }
 
     public Follow follow(int followerId, int followsId) {
-        User follower = userService.getUserById(followerId);
-        User follows = userService.getUserById(followsId);
+        User follower = userService.getById(followerId);
+        User follows = userService.getById(followsId);
         FollowsCompositePrimaryKey primaryKey = new FollowsCompositePrimaryKey(follower, follows);
         if (isFollowing(primaryKey)) throw new UserAlreadyFollowingException("User is already following!");
         Follow follow = new Follow(primaryKey);
@@ -35,18 +35,18 @@ public class FollowService {
     }
 
     public List<IUser> followers(int id) {
-        userService.getUserById(id);
+        userService.getById(id);
         return followRepository.findFollowers(id);
     }
 
     public List<IUser> follows(int id) {
-        userService.getUserById(id);
+        userService.getById(id);
         return followRepository.findFollows(id);
     }
 
     public Follow unfollow(int followerId, int followsId) {
-        User follower = userService.getUserById(followerId);
-        User follows = userService.getUserById(followsId);
+        User follower = userService.getById(followerId);
+        User follows = userService.getById(followsId);
         FollowsCompositePrimaryKey primaryKey = new FollowsCompositePrimaryKey(follower, follows);
         if (!isFollowing(primaryKey)) throw new UserNotFollowingException("User is not following!");
         Follow follow = new Follow(primaryKey);

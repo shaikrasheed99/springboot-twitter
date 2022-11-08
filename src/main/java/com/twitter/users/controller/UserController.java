@@ -34,7 +34,7 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<?> getUserById(@PathVariable int userId) throws JsonProcessingException {
-        User user = userService.getUserById(userId);
+        User user = userService.getById(userId);
         successResponse.setData(user);
         String responseJson = successResponse.convertToJson();
         return ResponseEntity.status(HttpStatus.OK).body(responseJson);

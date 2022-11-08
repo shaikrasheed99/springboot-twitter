@@ -31,7 +31,7 @@ public class TweetService {
 
         if (!errors.isEmpty()) throw new InvalidTweetRequestBodyException(errors);
 
-        User author = userService.getUserById(authorId);
+        User author = userService.getById(authorId);
 
         Tweet tweet = new Tweet(description, author);
         return tweetRepository.save(tweet);
@@ -46,7 +46,7 @@ public class TweetService {
     }
 
     public Tweet getByAuthorIdAndTweetId(int authorId, int tweetId) {
-        User author = userService.getUserById(authorId);
+        User author = userService.getById(authorId);
         Tweet tweet = getById(tweetId);
 
         if (tweet.getUser().getId() != authorId)
@@ -56,7 +56,7 @@ public class TweetService {
     }
 
     public List<Tweet> getByAuthorId(int id) {
-        User author = userService.getUserById(id);
+        User author = userService.getById(id);
 
         return tweetRepository.findAllByAuthorId(author.getId());
     }

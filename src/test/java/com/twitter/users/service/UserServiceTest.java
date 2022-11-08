@@ -59,7 +59,7 @@ public class UserServiceTest {
     void shouldBeAbleToGetUserById() {
         int userId = 1;
         when(userRepository.findById(userId)).thenReturn(Optional.ofNullable(user));
-        User user = userService.getUserById(userId);
+        User user = userService.getById(userId);
 
         assertEquals("Ironman", user.getName());
         verify(userRepository, times(1)).findById(userId);
@@ -70,6 +70,6 @@ public class UserServiceTest {
         int userId = 1;
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
-        assertThrows(UserNotFoundException.class, () -> userService.getUserById(userId));
+        assertThrows(UserNotFoundException.class, () -> userService.getById(userId));
     }
 }

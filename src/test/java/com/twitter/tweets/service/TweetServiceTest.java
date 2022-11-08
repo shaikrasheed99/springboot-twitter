@@ -45,7 +45,7 @@ public class TweetServiceTest {
 
     @Test
     void shouldBeAbleToCreateTweet() {
-        when(userService.getUserById(user.getId())).thenReturn(user);
+        when(userService.getById(user.getId())).thenReturn(user);
         when(tweetRepository.save(any(Tweet.class))).thenReturn(tweet);
 
         Tweet createdTweet = tweetService.create(description, user.getId());
@@ -53,7 +53,7 @@ public class TweetServiceTest {
         assertEquals(user.getId(), createdTweet.getUser().getId());
         assertEquals(description, createdTweet.getDescription());
 
-        verify(userService, times(1)).getUserById(user.getId());
+        verify(userService, times(1)).getById(user.getId());
         verify(tweetRepository, times(1)).save(any(Tweet.class));
     }
 
@@ -71,7 +71,7 @@ public class TweetServiceTest {
 
     @Test
     void shouldBeAbleToThrowExceptionWhenAuthorIdIsNotPresentInUserRepository() {
-        when(userService.getUserById(user.getId())).thenThrow(new UserNotFoundException("User not found"));
+        when(userService.getById(user.getId())).thenThrow(new UserNotFoundException("User not found"));
 
         assertThrows(UserNotFoundException.class, () -> tweetService.create(description, user.getId()));
     }
@@ -98,7 +98,7 @@ public class TweetServiceTest {
 
     @Test
     void shouldBeAbleToThrowExceptionWhenAuthorIsNotFound() {
-        when(userService.getUserById(user.getId())).thenThrow(UserNotFoundException.class);
+        when(userService.getById(user.getId())).thenThrow(UserNotFoundException.class);
 
         assertThrows(UserNotFoundException.class, () -> tweetService.getByAuthorIdAndTweetId(user.getId(), tweet.getId()));
     }
@@ -110,7 +110,7 @@ public class TweetServiceTest {
         tweets.add(tweet);
         tweets.add(tweet);
         when(tweetRepository.findAllByAuthorId(user.getId())).thenReturn(tweets);
-        when(userService.getUserById(user.getId())).thenReturn(user);
+        when(userService.getById(user.getId())).thenReturn(user);
 
         List<Tweet> tweetsByUserId = tweetService.getByAuthorId(user.getId());
 
@@ -121,17 +121,17 @@ public class TweetServiceTest {
 
     @Test
     void shouldBeAbleToThrowExceptionWhenFindingTweetsOfNotExistingUser() {
-        when(userService.getUserById(user.getId())).thenThrow(new UserNotFoundException("User not found!"));
+        when(userService.getById(user.getId())).thenThrow(new UserNotFoundException("User not found!"));
 
         assertThrows(UserNotFoundException.class, () -> tweetService.getByAuthorId(user.getId()));
 
-        verify(userService, times(1)).getUserById(user.getId());
+        verify(userService, times(1)).getById(user.getId());
     }
 
     @Test
     void shouldBeAbleToThrowExceptionWhenAuthorMismatchWithTweetDetails() {
         User anotherAuthor = new User("Captain");
-        when(userService.getUserById(anotherAuthor.getId() + 1)).thenReturn(anotherAuthor);
+        when(userService.getById(anotherAuthor.getId() + 1)).thenReturn(anotherAuthor);
         when(tweetRepository.findById(tweet.getId())).thenReturn(Optional.ofNullable(tweet));
 
         assertThrows(AuthorMismatchException.class, () -> tweetService.getByAuthorIdAndTweetId(1, tweet.getId()));

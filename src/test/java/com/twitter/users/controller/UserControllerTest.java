@@ -91,7 +91,7 @@ public class UserControllerTest {
     @Test
     void shouldBeAbleToGetUserDetailsWhenIdIsGiven() throws Exception {
         int userId = user.getId();
-        when(userService.getUserById(userId)).thenReturn(user);
+        when(userService.getById(userId)).thenReturn(user);
 
         ResultActions result = mockMvc.perform(get("/users/{userId}", userId));
 
@@ -100,13 +100,13 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.data.name").value(user.getName()))
                 .andDo(print());
 
-        verify(userService, times(1)).getUserById(userId);
+        verify(userService, times(1)).getById(userId);
     }
 
     @Test
     void shouldBeAbleToThrowExceptionWhenUserIsNotPresentWithGivenId() throws Exception {
         int userId = 1;
-        when(userService.getUserById(userId)).thenThrow(new UserNotFoundException("User not found!"));
+        when(userService.getById(userId)).thenThrow(new UserNotFoundException("User not found!"));
 
         ResultActions result = mockMvc.perform(get("/users/{userId}", userId));
 
@@ -114,6 +114,6 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.error.message").value("User not found!"))
                 .andDo(print());
 
-        verify(userService, times(1)).getUserById(userId);
+        verify(userService, times(1)).getById(userId);
     }
 }
